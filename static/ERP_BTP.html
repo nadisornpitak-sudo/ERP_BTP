@@ -704,6 +704,8 @@ const API = {
   headers: () => ({'Content-Type':'application/json','Authorization':'Bearer '+(sessionStorage.getItem('btp_token')||'')}),
   async get(path){ return fetch(API.BASE+path, {headers:API.headers()}); },
   async post(path,data){ return fetch(API.BASE+path,{method:'POST',headers:API.headers(),body:JSON.stringify(data)}); },
+  async put(path,data){ return fetch(API.BASE+path,{method:'PUT',headers:API.headers(),body:JSON.stringify(data)}); },
+  async del(path){ return fetch(API.BASE+path,{method:'DELETE',headers:API.headers()}); },
 };
 function _setConnStatus(online){
   const el=document.getElementById('conn-dot'); if(!el) return;
@@ -2669,7 +2671,7 @@ async function saveUser(uid){
   if(!uid&&!pass) return toast('กรอกรหัสผ่านสำหรับผู้ใช้ใหม่');
   const body={username,name,role}; if(pass) body.password=pass;
   try{
-    const r=uid?await API.post(`/api/users/${uid}`,body):await API.post('/api/users',body);
+    const r=uid?await API.put(`/api/users/${uid}`,body):await API.post('/api/users',body);
     if(!r.ok){ toast((await r.json()).detail||'บันทึกไม่สำเร็จ'); return; }
     closeModal(); RENDER.users(); toast('บันทึกแล้ว ✓');
   }catch(e){ toast('เกิดข้อผิดพลาด'); }
@@ -2677,7 +2679,7 @@ async function saveUser(uid){
 async function deleteUser(uid,name){
   if(!confirm(`ลบผู้ใช้ "${name}"?`)) return;
   try{
-    const r=await fetch(API.BASE+`/api/users/${uid}`,{method:'DELETE',headers:API.headers()});
+    const r=await API.del(`/api/users/${uid}`);
     if(!r.ok){ toast((await r.json()).detail||'ลบไม่สำเร็จ'); return; }
     RENDER.users(); toast('ลบแล้ว');
   }catch(e){ toast('เกิดข้อผิดพลาด'); }
