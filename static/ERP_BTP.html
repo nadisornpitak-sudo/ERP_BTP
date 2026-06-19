@@ -3493,97 +3493,163 @@ function spImport(){
 RENDER.tiktok = async function(){
   const pg = $('#page-tiktok');
   if(!IS_SERVER){
-    pg.innerHTML=`<div class="card" style="text-align:center;padding:48px"><p class="muted">ฟีเจอร์นี้ใช้ได้เฉพาะโหมดเซิร์ฟเวอร์เท่านั้น<br><span class="small">เปิดจาก Railway URL แทนการเปิดไฟล์ตรง</span></p></div>`;
+    pg.innerHTML=`<div class="card" style="text-align:center;padding:48px"><p class="muted">ฟีเจอร์นี้ใช้ได้เฉพาะโหมดเซิร์ฟเวอร์เท่านั้น</p></div>`;
     return;
   }
   pg.innerHTML=`<div class="card"><p class="muted small">กำลังโหลด...</p></div>`;
-  let cfg = {};
-  try {
-    const r = await API.get('/api/integrations/tiktok/config');
-    if(r.ok) cfg = await r.json();
-  } catch(e) {}
 
-  const lastSync = cfg.last_sync ? new Date(cfg.last_sync).toLocaleString('th-TH') : '—';
-  const shopName = cfg.shop_name || '—';
+  let cfg={}, tokens=[];
+  try {
+    const [rc,rt] = await Promise.all([
+      API.get('/api/integrations/tiktok/config'),
+      API.get('/api/tokens'),
+    ]);
+    if(rc.ok) cfg = await rc.json();
+    if(rt.ok) tokens = await rt.json();
+  } catch(e){}
+
+  const ORIGIN = window.location.origin;
+  const ENDPOINT = `${ORIGIN}/api/integrations/orders`;
 
   pg.innerHTML=`
+  <!-- ══ Step banner ══ -->
+  <div style="background:linear-gradient(135deg,#1E293B,#0F172A);border-radius:10px;padding:20px 24px;margin-bottom:20px;color:#E2E8F0">
+    <div style="font-size:13px;font-weight:600;color:#60A5FA;margin-bottom:4px">วิธีที่เร็วที่สุด — ไม่ต้องรอ Partner approval</div>
+    <div style="font-size:22px;font-weight:700">🔗 Make.com + TikTok Shop</div>
+    <div style="font-size:12px;color:#94A3B8;margin-top:4px">ทำได้เลยวันนี้ · ฟรี · Auto-sync ทุกชั่วโมง</div>
+  </div>
+
   <div class="grid g2">
-    <!-- ── Config card ── -->
+
+    <!-- ── STEP 1: API Token ── -->
     <div class="card">
-      <h3 style="font-size:15px;letter-spacing:0;text-transform:none;border:none;margin-bottom:16px">
-        🎵 TikTok Shop — API Settings
-      </h3>
-
-      <div style="background:var(--blue-light);border:1px solid rgba(36,144,239,.2);border-radius:8px;padding:14px 16px;margin-bottom:18px;font-size:12.5px">
-        <b style="color:var(--blue)">วิธีได้ API Credentials</b><br>
-        1. ไปที่ <a href="https://partner.tiktokshop.com" target="_blank" style="color:var(--blue)">partner.tiktokshop.com</a><br>
-        2. สมัคร Developer → สร้าง App<br>
-        3. คัดลอก <b>App Key</b> + <b>App Secret</b><br>
-        4. กด Authorize Shop → คัดลอก <b>Access Token</b> + <b>Shop ID</b>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">1</div>
+        <div style="font-weight:600;font-size:14px">สร้าง API Token สำหรับ Make.com</div>
       </div>
+      <p class="small muted mb">Token คือรหัสที่ Make.com ใช้เรียก BTP ERP แทนการ login — สร้างครั้งเดียวใช้ได้ตลอด</p>
 
-      <div class="field"><label>App Key *</label>
-        <input id="tt-appkey" value="${esc(cfg.app_key||'')}" placeholder="xxxxxxxxxxxxxxxx"></div>
-      <div class="field"><label>App Secret *</label>
-        <input id="tt-secret" type="password" value="${cfg.app_key?'••••••••':''}" placeholder="ตั้งค่าใหม่ (เว้นว่าง = ไม่เปลี่ยน)"></div>
-      <div class="field"><label>Access Token *</label>
-        <input id="tt-token" value="${esc(cfg.access_token||'')}" placeholder="ROW_..."></div>
-      <div class="field"><label>Shop ID *</label>
-        <input id="tt-shopid" value="${esc(cfg.shop_id||'')}" placeholder="7xxxxxxxxxxxxxxxxx"></div>
-      <div class="field"><label>ชื่อร้าน (ไว้แสดงผล)</label>
-        <input id="tt-shopname" value="${esc(cfg.shop_name||'')}" placeholder="Butterfly Thai Perfume"></div>
-
-      <div class="row">
-        <button class="btn p" onclick="ttSaveConfig()">💾 บันทึก Credentials</button>
-        <button class="btn" onclick="ttTest()">🔌 ทดสอบเชื่อมต่อ</button>
+      <div class="row mb" style="gap:8px">
+        <input id="tok-name" placeholder="ชื่อ token เช่น Make-TikTok" style="flex:1">
+        <button class="btn p" onclick="createApiToken()">＋ สร้าง Token</button>
       </div>
-      <div id="tt-test-result" style="margin-top:10px"></div>
+      <div id="tok-new" style="margin-bottom:12px"></div>
+
+      <!-- Token list -->
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Token ที่มีอยู่</div>
+      ${tokens.length ? `<div style="border:1px solid var(--border);border-radius:8px;overflow:hidden">
+        ${tokens.map(t=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px">
+          <span style="flex:1;font-weight:500">${esc(t.name)}</span>
+          <span class="muted" style="font-size:10px">${t.last_used?'ใช้ล่าสุด '+new Date(t.last_used).toLocaleDateString('th-TH'):'ยังไม่เคยใช้'}</span>
+          <button class="btn sm danger" onclick="revokeToken('${t.id}')">ลบ</button>
+        </div>`).join('')}
+      </div>` : `<div class="muted small" style="padding:12px;border:1px dashed var(--border);border-radius:8px;text-align:center">ยังไม่มี Token — กด "สร้าง Token" ด้านบน</div>`}
     </div>
 
-    <!-- ── Sync card ── -->
+    <!-- ── STEP 2: Make.com guide ── -->
     <div class="card">
-      <h3 style="font-size:15px;letter-spacing:0;text-transform:none;border:none;margin-bottom:16px">
-        🔄 ซิงค์ข้อมูล
-      </h3>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">2</div>
+        <div style="font-weight:600;font-size:14px">ตั้งค่า Make.com Scenario</div>
+      </div>
 
-      <div class="grid g2 mb" style="gap:12px">
-        <div class="card kpi" style="padding:14px">
-          <div class="lbl">ร้านที่เชื่อมต่อ</div>
-          <div class="val" style="font-size:14px">${esc(shopName)}</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+
+        <div style="background:var(--bg);border-radius:8px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:6px">A. สมัคร Make.com (ฟรี)</div>
+          <a href="https://make.com" target="_blank" class="btn sm p" style="text-decoration:none">เปิด make.com →</a>
         </div>
-        <div class="card kpi" style="padding:14px">
-          <div class="lbl">ซิงค์ล่าสุด</div>
-          <div class="val" style="font-size:13px">${lastSync}</div>
+
+        <div style="background:var(--bg);border-radius:8px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:6px">B. สร้าง Scenario ใหม่</div>
+          <div class="small">Create new scenario → เพิ่ม module แรก:</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
+            <span class="bdg b-info">TikTok Shop</span>
+            <span style="font-size:12px;color:var(--muted);line-height:1.8">→</span>
+            <span class="bdg b-gray">Watch Orders</span>
+          </div>
+          <div class="small muted" style="margin-top:4px">เชื่อมบัญชี TikTok Seller (OAuth) · Status: <b>COMPLETED</b></div>
         </div>
-      </div>
 
-      <div style="border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px">
-        <div style="font-weight:600;margin-bottom:6px;font-size:13px">📥 ดึง Orders → BTP ERP</div>
-        <p class="small muted mb">ดึง Orders ที่สถานะ COMPLETED ย้อนหลัง 7 วัน → สร้าง Sales Order + ตัดสต็อก Online (O) อัตโนมัติ</p>
-        <button class="btn p" onclick="ttSyncOrders()" id="tt-sync-btn">📥 ซิงค์ Orders ตอนนี้</button>
-        <div id="tt-sync-result" style="margin-top:10px"></div>
-      </div>
+        <div style="background:var(--bg);border-radius:8px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:6px">C. เพิ่ม module HTTP</div>
+          <div class="small mb">เพิ่ม module: <b>HTTP → Make a request</b></div>
+          <div style="background:#0F172A;border-radius:6px;padding:10px 12px;font-size:11px;color:#94A3B8;font-family:monospace;line-height:1.8">
+            <span style="color:#60A5FA">URL:</span> ${esc(ENDPOINT)}<br>
+            <span style="color:#60A5FA">Method:</span> POST<br>
+            <span style="color:#60A5FA">Header:</span> Authorization: Bearer <span style="color:#F59E0B">[TOKEN จาก Step 1]</span><br>
+            <span style="color:#60A5FA">Body type:</span> JSON (application/json)
+          </div>
+        </div>
 
-      <div style="border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px">
-        <div style="font-weight:600;margin-bottom:6px;font-size:13px">📤 อัปเดตสต็อก → TikTok</div>
-        <p class="small muted mb">ส่งยอดสต็อก Online (O) ปัจจุบันไปอัปเดตใน TikTok Shop listing ทุก SKU</p>
-        <button class="btn" onclick="ttPushStock()" id="tt-push-btn">📤 Push Stock ตอนนี้</button>
-        <div id="tt-push-result" style="margin-top:10px"></div>
-      </div>
+        <div style="background:var(--bg);border-radius:8px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:6px">D. Body Mapping (copy-paste)</div>
+          <div style="background:#0F172A;border-radius:6px;padding:10px 12px;font-size:10.5px;color:#94A3B8;font-family:monospace;line-height:1.7;white-space:pre-wrap">{
+  "source": "TikTok",
+  "order_id": "{{<b style='color:#60A5FA'>order_id</b>}}",
+  "date": "{{<b style='color:#60A5FA'>formatDate(create_time; YYYY-MM-DD)</b>}}",
+  "customer_name": "{{<b style='color:#60A5FA'>recipient_address.name</b>}}",
+  "customer_address": "{{<b style='color:#60A5FA'>recipient_address.full_address</b>}}",
+  "items": [{{<b style='color:#60A5FA'>map(line_items; item => </b>}}
+    {
+      "sku":   "{{<b style='color:#60A5FA'>item.seller_sku</b>}}",
+      "name":  "{{<b style='color:#60A5FA'>item.product_name</b>}}",
+      "qty":   {{<b style='color:#60A5FA'>item.quantity</b>}},
+      "price": {{<b style='color:#60A5FA'>item.sale_price</b>}}
+    }
+  {{<b style='color:#60A5FA'>)</b>}}]
+}</div>
+        </div>
 
-      <div style="background:var(--bg);border-radius:8px;padding:14px">
-        <div style="font-weight:600;font-size:12px;margin-bottom:8px">⏰ Auto-sync ด้วย n8n</div>
-        <p class="small muted" style="margin-bottom:8px">ตั้ง n8n ให้เรียก 2 endpoint นี้ทุก 1 ชั่วโมงอัตโนมัติ:</p>
-        <code style="display:block;background:#1E293B;color:#60A5FA;padding:8px 12px;border-radius:6px;font-size:11px;margin-bottom:6px">
-          POST ${IS_SERVER?window.location.origin:''}/api/integrations/tiktok/sync-orders<br>
-          POST ${IS_SERVER?window.location.origin:''}/api/integrations/tiktok/push-stock
-        </code>
-        <p class="small muted">Header: <code>Authorization: Bearer &lt;token&gt;</code></p>
+        <div style="background:var(--bg);border-radius:8px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:4px">E. ตั้ง Schedule</div>
+          <div class="small">Scenario settings → Run every <b>1 hour</b> (หรือ 15 min)</div>
+        </div>
+
       </div>
     </div>
+
+    <!-- ── Direct TikTok API (รอ approval) ── -->
+    <div class="card" style="grid-column:1/-1;opacity:.7">
+      <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:12px">🕐 รอ TikTok Partner Approval — Direct API (3-5 วัน)</div>
+      <div class="grid g2" style="gap:12px">
+        <div class="field"><label>App Key</label><input id="tt-appkey" value="${esc(cfg.app_key||'')}" placeholder="รอ approval"></div>
+        <div class="field"><label>Access Token</label><input id="tt-token" value="${esc(cfg.access_token||'')}" placeholder="รอ approval"></div>
+        <div class="field"><label>Shop ID</label><input id="tt-shopid" value="${esc(cfg.shop_id||'')}" placeholder="รอ approval"></div>
+        <div class="field"><label>App Secret</label><input id="tt-secret" type="password" value="${cfg.app_key?'••••••••':''}" placeholder="รอ approval"></div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn" onclick="ttSaveConfig()">💾 บันทึก</button>
+        <button class="btn" onclick="ttTest()">🔌 ทดสอบ</button>
+        <button class="btn p" onclick="ttSyncOrders()" id="tt-sync-btn">📥 ซิงค์ Orders</button>
+      </div>
+      <div id="tt-test-result" style="margin-top:8px"></div>
+      <div id="tt-sync-result" style="margin-top:6px"></div>
+    </div>
+
   </div>`;
 };
 
+async function createApiToken(){
+  const name = $('#tok-name').value.trim();
+  if(!name) return toast('กรอกชื่อ token');
+  const r = await API.post('/api/tokens', {name});
+  if(!r.ok){ toast('สร้างไม่สำเร็จ'); return; }
+  const d = await r.json();
+  $('#tok-new').innerHTML=`
+    <div style="background:#0F172A;border:1px solid #334155;border-radius:8px;padding:14px">
+      <div style="color:#F59E0B;font-weight:600;font-size:12px;margin-bottom:6px">⚠️ คัดลอก Token นี้ทันที — แสดงครั้งเดียวเท่านั้น!</div>
+      <code style="display:block;background:#1E293B;color:#4ADE80;padding:10px 14px;border-radius:6px;font-size:12px;word-break:break-all;margin-bottom:8px">${esc(d.token)}</code>
+      <button onclick="navigator.clipboard.writeText('${esc(d.token)}').then(()=>toast('คัดลอกแล้ว ✓'))" class="btn sm p">📋 คัดลอก</button>
+    </div>`;
+  toast('สร้าง Token แล้ว — คัดลอกเก็บไว้ด้วย');
+  $('#tok-name').value='';
+}
+async function revokeToken(id){
+  if(!confirm('ลบ Token นี้? Make.com จะใช้งานไม่ได้')) return;
+  const r = await API.del(`/api/tokens/${id}`);
+  if(r.ok){ RENDER.tiktok(); toast('ลบ Token แล้ว'); }
+}
 async function ttSaveConfig(){
   const body = {
     app_key:   $('#tt-appkey').value.trim(),

@@ -37,6 +37,14 @@ def init_db():
             user_id TEXT NOT NULL,
             created_at TEXT NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS api_tokens (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            token TEXT UNIQUE NOT NULL,
+            created_by TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            last_used TEXT
+        );
     """)
     admin_hash = hashlib.sha256("admin1234".encode()).hexdigest()
     try:
@@ -52,11 +60,21 @@ init_db()
 def verify_token(authorization: str = Header(...)):
     token = authorization.replace("Bearer ", "").strip()
     conn = get_conn()
+    # 1. Check session token (from login)
     row = conn.execute("SELECT user_id FROM sessions WHERE token=?", (token,)).fetchone()
+    if row:
+        conn.close()
+        return row["user_id"]
+    # 2. Check API token (for Make.com / n8n / Zapier)
+    row = conn.execute("SELECT created_by FROM api_tokens WHERE token=?", (token,)).fetchone()
+    if row:
+        conn.execute("UPDATE api_tokens SET last_used=? WHERE token=?",
+                     (datetime.now().isoformat(), token))
+        conn.commit()
+        conn.close()
+        return row["created_by"]
     conn.close()
-    if not row:
-        raise HTTPException(status_code=401, detail="กรุณาเข้าสู่ระบบ")
-    return row["user_id"]
+    raise HTTPException(status_code=401, detail="กรุณาเข้าสู่ระบบ")
 
 def require_admin(user_id: str = Depends(verify_token)):
     conn = get_conn()
@@ -176,6 +194,111 @@ async def delete_user(uid: str, admin_id: str = Depends(require_admin)):
 @app.get("/api/health")
 async def health():
     return {"status": "ok", "version": "3.0", "time": datetime.now().isoformat()}
+
+# ════════════════════════════════════════════════════════════
+#  API TOKENS (for Make.com / n8n / Zapier)
+# ════════════════════════════════════════════════════════════
+@app.get("/api/tokens")
+async def list_api_tokens(admin_id: str = Depends(require_admin)):
+    conn = get_conn()
+    rows = conn.execute(
+        "SELECT id, name, created_at, last_used FROM api_tokens ORDER BY created_at DESC"
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+@app.post("/api/tokens")
+async def create_api_token(body: dict, admin_id: str = Depends(require_admin)):
+    name = body.get("name", "").strip()
+    if not name:
+        raise HTTPException(400, "กรุณาตั้งชื่อ token")
+    new_token = "btp_" + secrets.token_hex(24)
+    tid = secrets.token_hex(8)
+    conn = get_conn()
+    conn.execute("INSERT INTO api_tokens VALUES (?,?,?,?,?,?)",
+                 (tid, name, new_token, admin_id, datetime.now().isoformat(), None))
+    conn.commit()
+    conn.close()
+    return {"id": tid, "name": name, "token": new_token}  # shown only once
+
+@app.delete("/api/tokens/{tid}")
+async def delete_api_token(tid: str, admin_id: str = Depends(require_admin)):
+    conn = get_conn()
+    conn.execute("DELETE FROM api_tokens WHERE id=?", (tid,))
+    conn.commit()
+    conn.close()
+    return {"ok": True}
+
+# ════════════════════════════════════════════════════════════
+#  GENERIC ORDER INTAKE — Make.com / Zapier / n8n
+#  POST /api/integrations/orders
+#  Body: { source, order_id, date, customer_name,
+#           customer_address, items:[{sku,name,qty,price}] }
+# ════════════════════════════════════════════════════════════
+def _uid(): return secrets.token_hex(10)
+
+@app.post("/api/integrations/orders")
+async def intake_order(body: dict, user_id: str = Depends(verify_token)):
+    if not DB_FILE.exists():
+        raise HTTPException(400, "ฐานข้อมูลว่าง")
+    db = json.loads(DB_FILE.read_text(encoding="utf-8"))
+
+    source  = str(body.get("source", "External")).strip()
+    order_id = str(body.get("order_id", ""))
+    if not order_id:
+        raise HTTPException(400, "ต้องระบุ order_id")
+
+    # Idempotent — skip if already imported
+    if any(s.get("external_id") == order_id for s in db.get("sales", [])):
+        return {"ok": True, "status": "skipped", "reason": "already imported"}
+
+    raw_items = body.get("items", [])
+    sale_items = []
+    now_iso = datetime.now().isoformat()
+
+    for item in raw_items:
+        sku   = str(item.get("sku", "")).strip()
+        qty   = max(1, int(float(item.get("qty", 1))))
+        price = float(item.get("price", 0))
+        name  = str(item.get("name", sku))
+        sale_items.append({"sku": sku, "name": name, "qty": qty, "price": price})
+
+        # Cut Online (O) stock
+        for p in db.get("products", []):
+            if p["sku"] == sku:
+                p["stock"]["O"] = max(0, p["stock"].get("O", 0) - qty)
+                db.setdefault("moves", []).append({
+                    "id": _uid(), "date": now_iso, "type": "sale",
+                    "sku": sku, "qty": qty, "channel": "O",
+                    "actor": f"{source} via Make.com", "lot": "",
+                    "from_loc": "", "to_loc": "",
+                    "doc_ref": f"{source[:3].upper()}-{order_id[-6:]}",
+                    "note": f"{source} Order #{order_id}",
+                })
+                break
+
+    seq = db.setdefault("seq", {})
+    seq["sale"] = seq.get("sale", 1) + 1
+    sale_no = f"SAL-ORD-{datetime.now().year + 543}-{str(seq['sale']).zfill(5)}"
+
+    db.setdefault("sales", []).append({
+        "id": f"ext_{_uid()}", "no": sale_no,
+        "date": str(body.get("date", now_iso[:10]))[:10],
+        "channel": source,
+        "customerId": "", "customer": {
+            "name":    str(body.get("customer_name", f"{source} Customer")),
+            "taxId":   "", "branch": "-",
+            "address": str(body.get("customer_address", "")),
+        },
+        "items": sale_items, "discount": 0,
+        "status": "ยืนยันแล้ว",
+        "external_id": order_id,
+    })
+
+    DB_FILE.write_text(
+        json.dumps(db, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
+    )
+    return {"ok": True, "status": "created", "sale_no": sale_no}
 
 # ════════════════════════════════════════════════════════════
 #  TIKTOK SHOP INTEGRATION
