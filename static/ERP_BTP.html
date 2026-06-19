@@ -626,6 +626,7 @@ label {
   <div class="nav-item" data-page="delivery"><span class="ic">🚛</span><span class="t">ใบส่งของ (DN)</span></div>
   <div class="nav-item" data-page="payment"><span class="ic">💳</span><span class="t">รับชำระเงิน</span></div>
   <div class="nav-item" data-page="shopee"><span class="ic">🛍️</span><span class="t">นำเข้าช่องทาง</span></div>
+  <div class="nav-item" data-page="tiktok"><span class="ic">🎵</span><span class="t">TikTok Shop</span></div>
   <div class="nav-sec">การจัดซื้อ (Buying)</div>
   <div class="nav-item" data-page="materialreq"><span class="ic">📋</span><span class="t">ใบขอซื้อ (MR)</span></div>
   <div class="nav-item" data-page="purchase"><span class="ic">🚚</span><span class="t">ใบสั่งซื้อ (PO)</span></div>
@@ -677,6 +678,7 @@ label {
   <div id="page-delivery" class="page"></div>
   <div id="page-payment" class="page"></div>
   <div id="page-shopee" class="page"></div>
+  <div id="page-tiktok" class="page"></div>
   <div id="page-materialreq" class="page"></div>
   <div id="page-purchase" class="page"></div>
   <div id="page-workorder" class="page"></div>
@@ -988,6 +990,7 @@ const TITLES={
   delivery:'ใบส่งของ (Delivery Note)',
   payment:'รับชำระเงิน (Payment Entry)',
   shopee:'นำเข้าช่องทาง',
+  tiktok:'TikTok Shop Integration',
   materialreq:'ใบขอซื้อ (Material Request)',
   purchase:'ใบสั่งซื้อ (Purchase Order)',
   workorder:'ใบสั่งผลิต (Work Order)',
@@ -1009,6 +1012,7 @@ const MODULES={
   delivery:['การขาย','ใบส่งของ'],
   payment:['การขาย','รับชำระเงิน'],
   shopee:['การขาย','นำเข้าช่องทาง'],
+  tiktok:['การขาย','TikTok Shop'],
   materialreq:['การจัดซื้อ','ใบขอซื้อ'],
   purchase:['การจัดซื้อ','ใบสั่งซื้อ'],
   workorder:['การผลิต','ใบสั่งผลิต'],
@@ -3485,6 +3489,166 @@ function spImport(){
   RENDER.shopee();
   if(typeof WH3D!=='undefined'&&WH3D.inited){WH3D.pmap={};db.products.forEach(x=>WH3D.pmap[x.sku]=x);wh3dRefreshBoxes();}
 }
+/* ============ TIKTOK SHOP INTEGRATION ============ */
+RENDER.tiktok = async function(){
+  const pg = $('#page-tiktok');
+  if(!IS_SERVER){
+    pg.innerHTML=`<div class="card" style="text-align:center;padding:48px"><p class="muted">ฟีเจอร์นี้ใช้ได้เฉพาะโหมดเซิร์ฟเวอร์เท่านั้น<br><span class="small">เปิดจาก Railway URL แทนการเปิดไฟล์ตรง</span></p></div>`;
+    return;
+  }
+  pg.innerHTML=`<div class="card"><p class="muted small">กำลังโหลด...</p></div>`;
+  let cfg = {};
+  try {
+    const r = await API.get('/api/integrations/tiktok/config');
+    if(r.ok) cfg = await r.json();
+  } catch(e) {}
+
+  const lastSync = cfg.last_sync ? new Date(cfg.last_sync).toLocaleString('th-TH') : '—';
+  const shopName = cfg.shop_name || '—';
+
+  pg.innerHTML=`
+  <div class="grid g2">
+    <!-- ── Config card ── -->
+    <div class="card">
+      <h3 style="font-size:15px;letter-spacing:0;text-transform:none;border:none;margin-bottom:16px">
+        🎵 TikTok Shop — API Settings
+      </h3>
+
+      <div style="background:var(--blue-light);border:1px solid rgba(36,144,239,.2);border-radius:8px;padding:14px 16px;margin-bottom:18px;font-size:12.5px">
+        <b style="color:var(--blue)">วิธีได้ API Credentials</b><br>
+        1. ไปที่ <a href="https://partner.tiktokshop.com" target="_blank" style="color:var(--blue)">partner.tiktokshop.com</a><br>
+        2. สมัคร Developer → สร้าง App<br>
+        3. คัดลอก <b>App Key</b> + <b>App Secret</b><br>
+        4. กด Authorize Shop → คัดลอก <b>Access Token</b> + <b>Shop ID</b>
+      </div>
+
+      <div class="field"><label>App Key *</label>
+        <input id="tt-appkey" value="${esc(cfg.app_key||'')}" placeholder="xxxxxxxxxxxxxxxx"></div>
+      <div class="field"><label>App Secret *</label>
+        <input id="tt-secret" type="password" value="${cfg.app_key?'••••••••':''}" placeholder="ตั้งค่าใหม่ (เว้นว่าง = ไม่เปลี่ยน)"></div>
+      <div class="field"><label>Access Token *</label>
+        <input id="tt-token" value="${esc(cfg.access_token||'')}" placeholder="ROW_..."></div>
+      <div class="field"><label>Shop ID *</label>
+        <input id="tt-shopid" value="${esc(cfg.shop_id||'')}" placeholder="7xxxxxxxxxxxxxxxxx"></div>
+      <div class="field"><label>ชื่อร้าน (ไว้แสดงผล)</label>
+        <input id="tt-shopname" value="${esc(cfg.shop_name||'')}" placeholder="Butterfly Thai Perfume"></div>
+
+      <div class="row">
+        <button class="btn p" onclick="ttSaveConfig()">💾 บันทึก Credentials</button>
+        <button class="btn" onclick="ttTest()">🔌 ทดสอบเชื่อมต่อ</button>
+      </div>
+      <div id="tt-test-result" style="margin-top:10px"></div>
+    </div>
+
+    <!-- ── Sync card ── -->
+    <div class="card">
+      <h3 style="font-size:15px;letter-spacing:0;text-transform:none;border:none;margin-bottom:16px">
+        🔄 ซิงค์ข้อมูล
+      </h3>
+
+      <div class="grid g2 mb" style="gap:12px">
+        <div class="card kpi" style="padding:14px">
+          <div class="lbl">ร้านที่เชื่อมต่อ</div>
+          <div class="val" style="font-size:14px">${esc(shopName)}</div>
+        </div>
+        <div class="card kpi" style="padding:14px">
+          <div class="lbl">ซิงค์ล่าสุด</div>
+          <div class="val" style="font-size:13px">${lastSync}</div>
+        </div>
+      </div>
+
+      <div style="border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px">
+        <div style="font-weight:600;margin-bottom:6px;font-size:13px">📥 ดึง Orders → BTP ERP</div>
+        <p class="small muted mb">ดึง Orders ที่สถานะ COMPLETED ย้อนหลัง 7 วัน → สร้าง Sales Order + ตัดสต็อก Online (O) อัตโนมัติ</p>
+        <button class="btn p" onclick="ttSyncOrders()" id="tt-sync-btn">📥 ซิงค์ Orders ตอนนี้</button>
+        <div id="tt-sync-result" style="margin-top:10px"></div>
+      </div>
+
+      <div style="border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px">
+        <div style="font-weight:600;margin-bottom:6px;font-size:13px">📤 อัปเดตสต็อก → TikTok</div>
+        <p class="small muted mb">ส่งยอดสต็อก Online (O) ปัจจุบันไปอัปเดตใน TikTok Shop listing ทุก SKU</p>
+        <button class="btn" onclick="ttPushStock()" id="tt-push-btn">📤 Push Stock ตอนนี้</button>
+        <div id="tt-push-result" style="margin-top:10px"></div>
+      </div>
+
+      <div style="background:var(--bg);border-radius:8px;padding:14px">
+        <div style="font-weight:600;font-size:12px;margin-bottom:8px">⏰ Auto-sync ด้วย n8n</div>
+        <p class="small muted" style="margin-bottom:8px">ตั้ง n8n ให้เรียก 2 endpoint นี้ทุก 1 ชั่วโมงอัตโนมัติ:</p>
+        <code style="display:block;background:#1E293B;color:#60A5FA;padding:8px 12px;border-radius:6px;font-size:11px;margin-bottom:6px">
+          POST ${IS_SERVER?window.location.origin:''}/api/integrations/tiktok/sync-orders<br>
+          POST ${IS_SERVER?window.location.origin:''}/api/integrations/tiktok/push-stock
+        </code>
+        <p class="small muted">Header: <code>Authorization: Bearer &lt;token&gt;</code></p>
+      </div>
+    </div>
+  </div>`;
+};
+
+async function ttSaveConfig(){
+  const body = {
+    app_key:   $('#tt-appkey').value.trim(),
+    shop_id:   $('#tt-shopid').value.trim(),
+    access_token: $('#tt-token').value.trim(),
+    shop_name: $('#tt-shopname').value.trim(),
+  };
+  const secret = $('#tt-secret').value;
+  if(secret && !secret.includes('•')) body.app_secret = secret;
+  if(!body.app_key || !body.shop_id || !body.access_token)
+    return toast('กรอก App Key, Shop ID และ Access Token');
+  const r = await API.post('/api/integrations/tiktok/config', body);
+  if(r.ok){ toast('บันทึก Credentials แล้ว ✓'); RENDER.tiktok(); }
+  else toast('บันทึกไม่สำเร็จ');
+}
+
+async function ttTest(){
+  const el = $('#tt-test-result');
+  el.innerHTML = '<span class="muted small">กำลังทดสอบ...</span>';
+  try {
+    const r = await API.post('/api/integrations/tiktok/test', {});
+    const d = await r.json();
+    if(d.ok){
+      const shops = (d.shops||[]).map(s=>`<b>${esc(s.name||s.shop_name||'')}</b> (${s.id||s.shop_id||''})`).join(', ');
+      el.innerHTML = `<span class="bdg b-ok">เชื่อมต่อสำเร็จ</span> ${shops||''}`;
+    } else {
+      el.innerHTML = `<span class="bdg b-bad">เชื่อมต่อไม่ได้</span> <span class="small muted">${esc(d.message||'')} (code: ${d.code||''})</span>`;
+    }
+  } catch(e) { el.innerHTML = `<span class="bdg b-bad">Error: ${esc(e.message)}</span>`; }
+}
+
+async function ttSyncOrders(){
+  const btn = $('#tt-sync-btn'), el = $('#tt-sync-result');
+  btn.disabled = true; btn.textContent = '⏳ กำลังซิงค์...';
+  el.innerHTML = '';
+  try {
+    const r = await API.post('/api/integrations/tiktok/sync-orders', {});
+    const d = await r.json();
+    if(d.ok || d.created !== undefined){
+      el.innerHTML = `<span class="bdg b-ok">สำเร็จ</span> สร้างใหม่ <b>${d.created}</b> orders · ข้ามซ้ำ <b>${d.skipped}</b>`;
+      save();
+    } else {
+      el.innerHTML = `<span class="bdg b-bad">ล้มเหลว</span> <span class="small muted">${esc(d.detail||JSON.stringify(d))}</span>`;
+    }
+  } catch(e){ el.innerHTML = `<span class="bdg b-bad">Error: ${esc(e.message)}</span>`; }
+  finally { btn.disabled=false; btn.textContent='📥 ซิงค์ Orders ตอนนี้'; }
+}
+
+async function ttPushStock(){
+  const btn = $('#tt-push-btn'), el = $('#tt-push-result');
+  btn.disabled=true; btn.textContent='⏳ กำลัง Push...';
+  el.innerHTML='';
+  try {
+    const r = await API.post('/api/integrations/tiktok/push-stock', {});
+    const d = await r.json();
+    if(d.ok || d.updated !== undefined){
+      el.innerHTML = `<span class="bdg b-ok">สำเร็จ</span> อัปเดต <b>${d.updated}</b> SKUs · ข้าม <b>${d.skipped}</b>`;
+      if(d.errors?.length) el.innerHTML += `<br><span class="small muted">⚠️ ${d.errors.join(', ')}</span>`;
+    } else {
+      el.innerHTML = `<span class="bdg b-bad">ล้มเหลว</span> <span class="small muted">${esc(d.detail||'')}</span>`;
+    }
+  } catch(e){ el.innerHTML = `<span class="bdg b-bad">Error: ${esc(e.message)}</span>`; }
+  finally { btn.disabled=false; btn.textContent='📤 Push Stock ตอนนี้'; }
+}
+
 /* ============ INIT ============ */
 function _initUI(){
   const _d=new Date();
@@ -3544,6 +3708,7 @@ const PAGE_SUB = {
   delivery: () => `${(db.deliveries||[]).filter(d=>d.status==='ร่าง').length} รอส่ง`,
   payment: () => `${(db.payments||[]).length} รายการ`,
   shopee: () => `นำเข้าออเดอร์จากช่องทางการขาย`,
+  tiktok: () => `เชื่อมต่อ TikTok Shop API — ซิงค์ Order และ Stock`,
   materialreq: () => `${(db.materialReqs||[]).filter(m=>m.status==='รอดำเนินการ').length} ใบรออนุมัติ`,
   purchase: () => `${db.pos.filter(p=>p.status==='รอรับ').length} PO รอรับ`,
   workorder: () => `${(db.workOrders||[]).filter(w=>w.status==='กำลังผลิต').length} ใบกำลังผลิต`,
