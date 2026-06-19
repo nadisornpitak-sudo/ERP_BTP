@@ -193,7 +193,35 @@ async def delete_user(uid: str, admin_id: str = Depends(require_admin)):
 # ─── Health & static ───────────────────────────────────────
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "version": "3.0", "time": datetime.now().isoformat()}
+    db_exists = DB_FILE.exists()
+    db_size   = DB_FILE.stat().st_size if db_exists else 0
+    products  = 0
+    if db_exists:
+        try:
+            d = json.loads(DB_FILE.read_text(encoding="utf-8"))
+            products = len(d.get("products", []))
+        except Exception:
+            pass
+    return {
+        "status": "ok", "version": "3.0",
+        "time": datetime.now().isoformat(),
+        "db": {"exists": db_exists, "size_bytes": db_size, "products": products},
+    }
+
+@app.post("/api/admin/restore-initial-data")
+async def restore_initial_data(request: Request, admin_id: str = Depends(require_admin)):
+    """Upload btp_erp.json from local machine to Railway (run once after Volume mount)."""
+    body = await request.body()
+    if not body:
+        raise HTTPException(400, "ไม่มีข้อมูล")
+    try:
+        data = json.loads(body)
+        if not data.get("products"):
+            raise HTTPException(400, "ไม่พบ products ในข้อมูล")
+    except json.JSONDecodeError:
+        raise HTTPException(400, "JSON ไม่ถูกต้อง")
+    DB_FILE.write_bytes(body)
+    return {"ok": True, "products": len(data["products"]), "size": len(body)}
 
 # ════════════════════════════════════════════════════════════
 #  API TOKENS (for Make.com / n8n / Zapier)
