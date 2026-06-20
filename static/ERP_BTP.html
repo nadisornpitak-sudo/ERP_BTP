@@ -1068,7 +1068,7 @@ const MODULES={
 const RENDER={};
 $$('.nav-item').forEach(el=>el.addEventListener('click',()=>go(el.dataset.page)));
 function go(page){
-  if (page !== 'scan' && _scanActive) stopScanner();
+  if (page !== 'scan' && _pgScanActive) stopScanner();
   $$('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===page));
   $$('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+page));
   $('#page-title').textContent=TITLES[page];
@@ -1083,11 +1083,11 @@ function drawBreadcrumb(page){
   el.innerHTML=crumbs.join('<span class="bc-sep">›</span>');
 }
 /* ============ SCAN ============ */
-let _scanner = null;
-let _scanActive = false;
+let _pgScanner = null;
+let _pgScanActive = false;
 
 RENDER.scan = function() {
-  if (_scanActive && _scanner) { try { _scanner.stop(); } catch(e){} _scanActive = false; }
+  if (_pgScanActive && _pgScanner) { try { _pgScanner.stop(); } catch(e){} _pgScanActive = false; }
   $('#page-scan').innerHTML = `
   <div style="max-width:540px;margin:0 auto">
     <div class="card" style="padding:16px;margin-bottom:12px">
@@ -1105,22 +1105,22 @@ RENDER.scan = function() {
 };
 
 function startScanner() {
-  if (_scanActive) return;
+  if (_pgScanActive) return;
   const config = { fps: 10, qrbox: { width: 260, height: 180 }, aspectRatio: 1.5,
     formatsToSupport: [0,1,2,3,4,5,6,7,8,9,10,11,12,13] };
-  _scanner = new Html5Qrcode('scan-reader');
-  _scanner.start({ facingMode: 'environment' }, config, code => {
+  _pgScanner = new Html5Qrcode('scan-reader');
+  _pgScanner.start({ facingMode: 'environment' }, config, code => {
     lookupProduct(code);
   }, () => {}).then(() => {
-    _scanActive = true;
+    _pgScanActive = true;
     $('#btn-start-scan').style.display = 'none';
     $('#btn-stop-scan').style.display = '';
   }).catch(err => toast('ไม่สามารถเปิดกล้องได้: ' + err));
 }
 
 function stopScanner() {
-  if (_scanner && _scanActive) {
-    _scanner.stop().then(() => { _scanActive = false; $('#btn-start-scan').style.display = ''; $('#btn-stop-scan').style.display = 'none'; }).catch(() => {});
+  if (_pgScanner && _pgScanActive) {
+    _pgScanner.stop().then(() => { _pgScanActive = false; $('#btn-start-scan').style.display = ''; $('#btn-stop-scan').style.display = 'none'; }).catch(() => {});
   }
 }
 
