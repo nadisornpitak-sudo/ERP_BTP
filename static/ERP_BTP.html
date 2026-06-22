@@ -153,45 +153,7 @@ body {
   padding: 18px 18px 5px;
   text-transform: uppercase;
   letter-spacing: 0.7px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  user-select: none;
-  transition: color 0.15s ease, background-color 0.15s ease;
 }
-.nav-sec:hover {
-  color: var(--blue);
-  background-color: rgba(36, 144, 239, 0.04);
-}
-.nav-arrow {
-  font-size: 8px;
-  color: var(--dim);
-  transition: transform 0.2s ease;
-}
-.nav-group.collapsed .nav-arrow {
-  transform: rotate(-90deg);
-}
-.nav-sub {
-  display: block;
-}
-.nav-group.collapsed .nav-sub {
-  display: none;
-}
-
-/* mini-sidebar overrides: force submenus open when sidebar is in mini icon-only mode */
-@media (max-width: 860px) {
-  .nav-group.collapsed .nav-sub {
-    display: block !important;
-  }
-}
-@media (max-width: 480px) {
-  /* on mobile screen, when menu is open, respect the collapsed class */
-  .side.mob-open .nav-group.collapsed .nav-sub {
-    display: none !important;
-  }
-}
-
 
 /* ────── MAIN ────── */
 .main {
@@ -689,61 +651,34 @@ label {
       <p>Thai Perfume</p>
     </div>
   </div>
-  <div class="nav-group" data-group="overview">
-    <div class="nav-sec"><span class="t">ภาพรวม</span><span class="nav-arrow">▼</span></div>
-    <div class="nav-sub">
-      <div class="nav-item active" data-page="dash"><span class="ic">📊</span><span class="t">แดชบอร์ด</span></div>
-    </div>
-  </div>
-  <div class="nav-group collapsed" data-group="stock">
-    <div class="nav-sec"><span class="t">สต็อก (Stock)</span><span class="nav-arrow">▼</span></div>
-    <div class="nav-sub">
-      <div class="nav-item" data-page="scan"><span class="ic">📷</span><span class="t">Scan สินค้า</span></div>
-      <div class="nav-item" data-page="products"><span class="ic">🏷️</span><span class="t">สินค้า (Items)</span></div>
-      <div class="nav-item" data-page="inventory"><span class="ic">📦</span><span class="t">การเคลื่อนไหวสต็อก</span></div>
-      <div class="nav-item" data-page="stockrecon"><span class="ic">🔢</span><span class="t">ตรวจนับสต็อก</span></div>
-      <div class="nav-item" data-page="pricelist"><span class="ic">🏷️</span><span class="t">Price List</span></div>
-      <div class="nav-item" data-page="wh3d"><span class="ic">🏭</span><span class="t">3D คลังสินค้า</span></div>
-    </div>
-  </div>
-  <div class="nav-group collapsed" data-group="selling">
-    <div class="nav-sec"><span class="t">การขาย (Selling)</span><span class="nav-arrow">▼</span></div>
-    <div class="nav-sub">
-      <div class="nav-item" data-page="customers"><span class="ic">👥</span><span class="t">ลูกค้า (Customer)</span></div>
-      <div class="nav-item" data-page="quotation"><span class="ic">📄</span><span class="t">ใบเสนอราคา</span></div>
-      <div class="nav-item" data-page="sales"><span class="ic">🛒</span><span class="t">ใบขาย (Sales Order)</span></div>
-      <div class="nav-item" data-page="delivery"><span class="ic">🚛</span><span class="t">ใบส่งของ (DN)</span></div>
-      <div class="nav-item" data-page="payment"><span class="ic">💳</span><span class="t">รับชำระเงิน</span></div>
-      <div class="nav-item" data-page="shopee"><span class="ic">🛍️</span><span class="t">นำเข้าช่องทาง</span></div>
-      <div class="nav-item" data-page="tiktok"><span class="ic">🎵</span><span class="t">TikTok Shop</span></div>
-    </div>
-  </div>
-  <div class="nav-group collapsed" data-group="buying">
-    <div class="nav-sec"><span class="t">การจัดซื้อ (Buying)</span><span class="nav-arrow">▼</span></div>
-    <div class="nav-sub">
-      <div class="nav-item" data-page="materialreq"><span class="ic">📋</span><span class="t">ใบขอซื้อ (MR)</span></div>
-      <div class="nav-item" data-page="purchase"><span class="ic">🚚</span><span class="t">ใบสั่งซื้อ (PO)</span></div>
-    </div>
-  </div>
-  <div class="nav-group collapsed" data-group="mfg">
-    <div class="nav-sec"><span class="t">การผลิต (MFG)</span><span class="nav-arrow">▼</span></div>
-    <div class="nav-sub">
-      <div class="nav-item" data-page="workorder"><span class="ic">⚙️</span><span class="t">ใบสั่งผลิต (WO)</span></div>
-    </div>
-  </div>
-  <div class="nav-group collapsed" data-group="accounts">
-    <div class="nav-sec"><span class="t">การเงิน (Accounts)</span><span class="nav-arrow">▼</span></div>
-    <div class="nav-sub">
-      <div class="nav-item" data-page="acct"><span class="ic">🧾</span><span class="t">บัญชี & ภาษี</span></div>
-    </div>
-  </div>
-  <div class="nav-group collapsed" data-group="system">
-    <div class="nav-sec"><span class="t">ระบบ</span><span class="nav-arrow">▼</span></div>
-    <div class="nav-sub">
-      <div class="nav-item" data-page="settings"><span class="ic">⚙️</span><span class="t">ตั้งค่า</span></div>
-      <div class="nav-item" data-page="users" id="nav-users" style="display:none"><span class="ic">👤</span><span class="t">ผู้ใช้งาน</span></div>
-    </div>
-  </div>
+  <div class="nav-sec">ภาพรวม</div>
+  <div class="nav-item active" data-page="dash"><span class="ic">📊</span><span class="t">แดชบอร์ด</span></div>
+  <div class="nav-item" data-page="agent"><span class="ic">🤖</span><span class="t">ผู้ช่วย Agent</span></div>
+  <div class="nav-sec">สต็อก (Stock)</div>
+  <div class="nav-item" data-page="products"><span class="ic">🏷️</span><span class="t">สินค้า (Items)</span></div>
+  <div class="nav-item" data-page="inventory"><span class="ic">📦</span><span class="t">การเคลื่อนไหวสต็อก</span></div>
+  <div class="nav-item" data-page="stockrecon"><span class="ic">🔢</span><span class="t">ตรวจนับสต็อก</span></div>
+  <div class="nav-item" data-page="pricelist"><span class="ic">🏷️</span><span class="t">Price List</span></div>
+  <div class="nav-item" data-page="wh3d"><span class="ic">🏭</span><span class="t">3D คลังสินค้า</span></div>
+  <div class="nav-sec">การขาย (Selling)</div>
+  <div class="nav-item" data-page="customers"><span class="ic">👥</span><span class="t">ลูกค้า (Customer)</span></div>
+  <div class="nav-item" data-page="quotation"><span class="ic">📄</span><span class="t">ใบเสนอราคา</span></div>
+  <div class="nav-item" data-page="sales"><span class="ic">🛒</span><span class="t">ใบขาย (Sales Order)</span></div>
+  <div class="nav-item" data-page="delivery"><span class="ic">🚛</span><span class="t">ใบส่งของ (DN)</span></div>
+  <div class="nav-item" data-page="payment"><span class="ic">💳</span><span class="t">รับชำระเงิน</span></div>
+  <div class="nav-item" data-page="shopee"><span class="ic">🛍️</span><span class="t">นำเข้าช่องทาง (Excel)</span></div>
+  <div class="nav-item" data-page="tiktok"><span class="ic">🔌</span><span class="t">เชื่อมต่อ E-commerce</span></div>
+  <div class="nav-sec">การจัดซื้อ (Buying)</div>
+  <div class="nav-item" data-page="mrp"><span class="ic">🏭</span><span class="t">วางแผนวัตถุดิบ (MRP)</span></div>
+  <div class="nav-item" data-page="materialreq"><span class="ic">📋</span><span class="t">ใบขอซื้อ (MR)</span></div>
+  <div class="nav-item" data-page="purchase"><span class="ic">🚚</span><span class="t">ใบสั่งซื้อ (PO)</span></div>
+  <div class="nav-sec">การผลิต (MFG)</div>
+  <div class="nav-item" data-page="workorder"><span class="ic">⚙️</span><span class="t">ใบสั่งผลิต (WO)</span></div>
+  <div class="nav-sec">การเงิน (Accounts)</div>
+  <div class="nav-item" data-page="acct"><span class="ic">🧾</span><span class="t">บัญชี & ภาษี</span></div>
+  <div class="nav-sec">ระบบ</div>
+  <div class="nav-item" data-page="settings"><span class="ic">⚙️</span><span class="t">ตั้งค่า</span></div>
+  <div class="nav-item" data-page="users" id="nav-users" style="display:none"><span class="ic">👤</span><span class="t">ผู้ใช้งาน</span></div>
   <div class="nav-divider"></div>
   <div class="nav-footer">
     <div class="nf-brand">Butterfly Thai Perfume</div>
@@ -773,8 +708,9 @@ label {
       </div>
     </div>
   </div>
-  <div id="page-scan" class="page"></div>
   <div id="page-dash" class="page active"></div>
+  <div id="page-agent" class="page"></div>
+  <div id="page-mrp" class="page"></div>
   <div id="page-products" class="page"></div>
   <div id="page-inventory" class="page"></div>
   <div id="page-stockrecon" class="page"></div>
@@ -1088,9 +1024,10 @@ function vatParts(total, rate, inc){
 /* ============ NAV ============ */
 const TITLES={
   dash:'แดชบอร์ด',
+  agent:'ผู้ช่วย Agent — แจ้งเตือนสต็อกอัตโนมัติ',
+  mrp:'วางแผนความต้องการวัตถุดิบ (MRP)',
   products:'สินค้า (Item Master)',
   inventory:'การเคลื่อนไหวสต็อก (Stock Ledger)',
-  scan:'Scan สินค้า',
   stockrecon:'ตรวจนับสต็อก (Stock Reconciliation)',
   pricelist:'Price List',
   wh3d:'3D คลังสินค้า (Digital Twin)',
@@ -1099,8 +1036,8 @@ const TITLES={
   sales:'ใบขาย (Sales Order)',
   delivery:'ใบส่งของ (Delivery Note)',
   payment:'รับชำระเงิน (Payment Entry)',
-  shopee:'นำเข้าช่องทาง',
-  tiktok:'TikTok Shop Integration',
+  shopee:'นำเข้าช่องทาง (Excel)',
+  tiktok:'เชื่อมต่อ E-commerce (E-commerce Integration)',
   materialreq:'ใบขอซื้อ (Material Request)',
   purchase:'ใบสั่งซื้อ (Purchase Order)',
   workorder:'ใบสั่งผลิต (Work Order)',
@@ -1111,7 +1048,8 @@ const TITLES={
 /* ERPNext-style module breadcrumb path */
 const MODULES={
   dash:['หน้าหลัก'],
-  scan:['สต็อก','Scan สินค้า'],
+  agent:['ภาพรวม','ผู้ช่วย Agent'],
+  mrp:['การจัดซื้อ','วางแผนวัตถุดิบ (MRP)'],
   products:['สต็อก','สินค้า (Item)'],
   inventory:['สต็อก','บัญชีคุมสต็อก'],
   stockrecon:['สต็อก','ตรวจนับสต็อก'],
@@ -1122,8 +1060,8 @@ const MODULES={
   sales:['การขาย','ใบขาย'],
   delivery:['การขาย','ใบส่งของ'],
   payment:['การขาย','รับชำระเงิน'],
-  shopee:['การขาย','นำเข้าช่องทาง'],
-  tiktok:['การขาย','TikTok Shop'],
+  shopee:['การขาย','นำเข้าช่องทาง (Excel)'],
+  tiktok:['การขาย','เชื่อมต่อ E-commerce'],
   materialreq:['การจัดซื้อ','ใบขอซื้อ'],
   purchase:['การจัดซื้อ','ใบสั่งซื้อ'],
   workorder:['การผลิต','ใบสั่งผลิต'],
@@ -1133,29 +1071,12 @@ const MODULES={
 };
 const RENDER={};
 $$('.nav-item').forEach(el=>el.addEventListener('click',()=>go(el.dataset.page)));
-
-// Category headings click toggle
-$$('.nav-sec').forEach(sec => {
-  sec.addEventListener('click', () => {
-    const group = sec.closest('.nav-group');
-    if (group) group.classList.toggle('collapsed');
-  });
-});
-
 function go(page){
-  if (page !== 'scan' && _pgScanActive) stopScanner();
   $$('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===page));
   $$('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+page));
   $('#page-title').textContent=TITLES[page];
   drawBreadcrumb(page);
   RENDER[page] && RENDER[page]();
-
-  // Auto-expand active page's group
-  const activeItem = document.querySelector(`.nav-item[data-page="${page}"]`);
-  if (activeItem) {
-    const group = activeItem.closest('.nav-group');
-    if (group) group.classList.remove('collapsed');
-  }
 }
 function drawBreadcrumb(page){
   const el=$('#breadcrumb'); if(!el) return;
@@ -1164,161 +1085,6 @@ function drawBreadcrumb(page){
   if(path.length>1) crumbs.push(`<span>${esc(path[0])}</span>`);
   el.innerHTML=crumbs.join('<span class="bc-sep">›</span>');
 }
-/* ============ SCAN ============ */
-let _pgScanner = null;
-let _pgScanActive = false;
-
-RENDER.scan = function() {
-  if (_pgScanActive && _pgScanner) { try { _pgScanner.stop(); } catch(e){} _pgScanActive = false; }
-  $('#page-scan').innerHTML = `
-  <div style="max-width:540px;margin:0 auto">
-    <div class="card" style="padding:16px;margin-bottom:12px">
-      <div style="font-size:13px;font-weight:700;margin-bottom:10px">📷 สแกนบาร์โค้ด / QR Code</div>
-      <div id="scan-reader" style="width:100%;border-radius:8px;overflow:hidden;background:#000;min-height:220px"></div>
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button class="btn p" id="btn-start-scan" onclick="startScanner()">▶ เปิดกล้อง</button>
-        <button class="btn" id="btn-stop-scan" onclick="stopScanner()" style="display:none">⏹ ปิดกล้อง</button>
-        <input id="scan-manual" placeholder="พิมพ์ SKU หรือ GTIN แล้วกด Enter" style="flex:1;border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:13px;font-family:inherit" onkeydown="if(event.key==='Enter')lookupProduct(this.value.trim())">
-        <button class="btn" onclick="lookupProduct($('#scan-manual').value.trim())">🔍</button>
-      </div>
-    </div>
-    <div id="scan-result"></div>
-  </div>`;
-};
-
-function startScanner() {
-  if (_pgScanActive) return;
-  const config = { fps: 10, qrbox: { width: 260, height: 180 }, aspectRatio: 1.5,
-    formatsToSupport: [0,1,2,3,4,5,6,7,8,9,10,11,12,13] };
-  _pgScanner = new Html5Qrcode('scan-reader');
-  _pgScanner.start({ facingMode: 'environment' }, config, code => {
-    lookupProduct(code);
-  }, () => {}).then(() => {
-    _pgScanActive = true;
-    $('#btn-start-scan').style.display = 'none';
-    $('#btn-stop-scan').style.display = '';
-  }).catch(err => toast('ไม่สามารถเปิดกล้องได้: ' + err));
-}
-
-function stopScanner() {
-  if (_pgScanner && _pgScanActive) {
-    _pgScanner.stop().then(() => { _pgScanActive = false; $('#btn-start-scan').style.display = ''; $('#btn-stop-scan').style.display = 'none'; }).catch(() => {});
-  }
-}
-
-function lookupProduct(query) {
-  if (!query) return;
-  const q = query.trim();
-  const p = db.products.find(x => x.sku === q || x.gtin === q || (x.gtin && x.gtin.includes(q)));
-  const el = $('#scan-result');
-  if (!el) return;
-  if (!p) {
-    el.innerHTML = `<div class="card" style="border:2px solid var(--error);padding:16px;text-align:center">
-      <div style="font-size:24px;margin-bottom:8px">❌</div>
-      <div style="font-weight:700;color:var(--error)">ไม่พบสินค้า</div>
-      <div class="muted small">"${esc(q)}" — ไม่พบในระบบ</div>
-    </div>`;
-    return;
-  }
-
-  const total = totalStock(p);
-  const channels = [
-    { key: 'W', label: 'คลังกลาง (W)', color: '#2490EF' },
-    { key: 'S', label: 'หน้าร้าน (S)', color: '#28A745' },
-    { key: 'O', label: 'Online (O)', color: '#F59E0B' },
-    { key: 'D', label: 'Dealer (D)', color: '#8B5CF6' },
-    { key: 'Q', label: 'Quarantine (Q)', color: '#E24C4C' },
-    { key: 'F', label: 'Floor (F)', color: '#64748b' },
-  ];
-
-  const stockHtml = channels.map(ch => {
-    const qty = p.stock[ch.key] || 0;
-    if (qty === 0) return '';
-    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
-      <span style="color:${ch.color};font-weight:600;font-size:12.5px">${ch.label}</span>
-      <span style="font-size:18px;font-weight:800">${fmt(qty)}</span>
-    </div>`;
-  }).join('') || `<div class="muted small" style="padding:8px 0;text-align:center">— สต็อกว่างทุกคลัง —</div>`;
-
-  // BOM section (สินค้านี้ใช้วัตถุดิบอะไร)
-  let bomHtml = '';
-  if (p.bom && p.bom.length > 0) {
-    const bomRows = p.bom.map(c => {
-      const cp = db.products.find(x => x.sku === c.sku);
-      const have = cp ? (cp.stock.W || 0) : 0;
-      const canMake = c.qty > 0 ? Math.floor(have / c.qty) : '∞';
-      const ok = typeof canMake === 'number' && canMake > 0;
-      return `<tr>
-        <td><b>${esc(c.sku)}</b><div class="muted small">${esc(cp ? cp.name : '—')}</div></td>
-        <td class="num">${fmt(c.qty)} / ชิ้น</td>
-        <td class="num"><b style="color:${have>0?'var(--success)':'var(--error)'}">${fmt(have)}</b></td>
-        <td class="num"><b style="color:${ok?'var(--success)':'var(--error)'}">${canMake}</b></td>
-      </tr>`;
-    }).join('');
-
-    const totalCanMake = p.bom.reduce((min, c) => {
-      const cp = db.products.find(x => x.sku === c.sku);
-      const have = cp ? (cp.stock.W || 0) : 0;
-      return Math.min(min, c.qty > 0 ? Math.floor(have / c.qty) : Infinity);
-    }, Infinity);
-
-    bomHtml = `
-    <div class="card" style="padding:14px;margin-top:10px">
-      <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--blue)">🧪 BOM — วัตถุดิบที่ใช้ผลิต</div>
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>SKU วัตถุดิบ</th><th class="num">ใช้ต่อชิ้น</th><th class="num">คงเหลือ (W)</th><th class="num">ผลิตได้สูงสุด</th></tr></thead>
-          <tbody>${bomRows}</tbody>
-        </table>
-      </div>
-      <div style="margin-top:10px;padding:10px;background:var(--bg);border-radius:6px;display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:12.5px;font-weight:600">ผลิตได้ทันที (ตาม BOM)</span>
-        <span style="font-size:22px;font-weight:800;color:${totalCanMake>0?'var(--success)':'var(--error)'}">${totalCanMake === Infinity ? '∞' : fmt(totalCanMake)} ชิ้น</span>
-      </div>
-    </div>`;
-  }
-
-  // ถูกใช้ใน BOM ของสินค้าอื่น
-  const usedIn = db.products.filter(x => (x.bom||[]).some(c => c.sku === p.sku));
-  let usedInHtml = '';
-  if (usedIn.length > 0) {
-    usedInHtml = `
-    <div class="card" style="padding:14px;margin-top:10px">
-      <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#8B5CF6">🔗 ถูกใช้ใน BOM ของสินค้า</div>
-      ${usedIn.map(x => {
-        const c = x.bom.find(b => b.sku === p.sku);
-        const canMake = c.qty > 0 ? Math.floor((p.stock.W||0) / c.qty) : '∞';
-        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
-          <div><b>${esc(x.sku)}</b> <span class="muted small">${esc(x.name)}</span><div class="muted small">ใช้ ${fmt(c.qty)} ชิ้น/ชิ้น</div></div>
-          <div style="text-align:right"><div class="muted small">ผลิตได้</div><b style="font-size:16px;color:${typeof canMake==='number'&&canMake>0?'var(--success)':'var(--error)'}">${typeof canMake==='number'?fmt(canMake):canMake}</b></div>
-        </div>`;
-      }).join('')}
-    </div>`;
-  }
-
-  el.innerHTML = `
-    <div class="card" style="border:2px solid var(--blue);padding:16px">
-      <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px">
-        ${p.img ? `<img src="${esc(p.img)}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;flex-shrink:0">` : `<div style="width:64px;height:64px;background:var(--bg);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">📦</div>`}
-        <div style="flex:1">
-          <div style="font-size:18px;font-weight:800">${esc(p.name)}</div>
-          <div class="muted small" style="margin-top:2px">SKU: <b>${esc(p.sku)}</b>${p.gtin?` • GTIN: ${esc(p.gtin)}`:''}</div>
-          <div class="muted small">กลุ่ม: ${esc(p.group||'—')}${p.variant?` • ${esc(p.variant)}`:''}</div>
-        </div>
-        <div style="text-align:right;flex-shrink:0">
-          <div class="muted small">สต็อกรวม</div>
-          <div style="font-size:32px;font-weight:800;color:${total>0?'var(--blue)':'var(--error)'};line-height:1">${fmt(total)}</div>
-          <div class="muted small">ชิ้น</div>
-        </div>
-      </div>
-      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px">สต็อกแยกคลัง</div>
-      ${stockHtml}
-      ${p.floor_location ? `<div style="margin-top:8px;font-size:12px;color:#F59E0B">📍 Floor: <b>${esc(p.floor_location)}</b> — ${fmt(p.floor_qty||0)} ชิ้น</div>` : ''}
-    </div>
-    ${bomHtml}
-    ${usedInHtml}`;
-}
-
 /* ============ DASHBOARD ============ */
 let charts={};
 RENDER.dash = function(){
@@ -2684,6 +2450,212 @@ function quotToSale(id){
 
 /* ============ MATERIAL REQUEST ============ */
 let mrDraft=null;
+/* ===== WO ทยอยเบิกวัตถุดิบรายวัน (Partial Material Issue) ===== */
+function woPlannedMaterials(wo){
+  const items = wo.items || [{ sku: wo.sku, qty: wo.qty, bom: wo.bom }];
+  const need = {};
+  items.forEach(it => { const bom = it.bom || (db.products.find(p=>p.sku===it.sku)||{}).bom || [];
+    bom.forEach(c => { need[c.sku] = (need[c.sku] || 0) + c.qty * it.qty; }); });
+  return need;
+}
+function woIssuedMaterials(wo){
+  const out = {};
+  (wo.issues || []).forEach(iss => (iss.materials || []).forEach(m => { out[m.sku] = (out[m.sku] || 0) + m.qty; }));
+  return out;
+}
+function woIssueSectionHtml(wo){
+  const planned = woPlannedMaterials(wo), issued = woIssuedMaterials(wo);
+  const skus = Object.keys(planned);
+  if (!skus.length) return '';
+  const rows = skus.map(sku => { const p = db.products.find(x => x.sku === sku);
+    const need = planned[sku], iss = issued[sku] || 0, rem = need - iss; const w = p ? (p.stock.W || 0) : 0;
+    return `<tr><td><b>${esc(sku)}</b></td><td class="small">${esc(p ? p.name : sku)}</td>
+      <td class="num">${fmt(need)}</td><td class="num" style="color:var(--success)">${fmt(iss)}</td>
+      <td class="num"${rem > 0 ? ' style="color:var(--warn);font-weight:700"' : ''}>${fmt(rem)}</td>
+      <td class="num small"${w < rem ? ' style="color:var(--bad)"' : ''}>${fmt(w)}</td></tr>`; }).join('');
+  const log = (wo.issues || []).map((iss, i) => {
+    const mat = (iss.materials || []).map(m => esc(m.sku) + '×' + fmt(m.qty)).join(', ') || '—';
+    const out = (iss.outputs || []).map(o => esc(o.sku) + '×' + fmt(o.qty)).join(', ') || '—';
+    return `<tr><td>${i + 1}</td><td>${thDateShort(iss.date)}</td><td class="small">${mat}</td><td class="small">${out}</td><td class="small">${esc(iss.note || '')}</td></tr>`;
+  }).join('') || '<tr><td colspan="5" class="muted" style="text-align:center">— ยังไม่มีการเบิกย่อย —</td></tr>';
+  return `<b style="font-size:12.5px;display:block;margin:14px 0 6px">📤 ความคืบหน้าการเบิกวัตถุดิบ (ทยอยเบิก)</b>
+    <div class="tbl-wrap" style="margin-bottom:10px"><table>
+      <thead><tr><th>วัตถุดิบ</th><th>ชื่อ</th><th class="num">ต้องใช้รวม</th><th class="num">เบิกแล้ว</th><th class="num">เหลือต้องเบิก</th><th class="num">คงเหลือ W</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>
+    <b style="font-size:12.5px;display:block;margin:10px 0 6px">📒 ประวัติการเบิก/ผลิตรายวัน (${(wo.issues || []).length})</b>
+    <div class="tbl-wrap" style="margin-bottom:12px"><table>
+      <thead><tr><th>#</th><th>วันที่</th><th>วัตถุดิบที่เบิก</th><th>ผลิตได้</th><th>หมายเหตุ</th></tr></thead>
+      <tbody>${log}</tbody></table></div>`;
+}
+window.openWOIssue = function(woId){
+  const wo = db.workOrders.find(x => x.id === woId); if (!wo) return;
+  const items = wo.items || [{ sku: wo.sku, name: wo.skuName || wo.sku, qty: wo.qty, producedQty: wo.producedQty || 0, bom: wo.bom }];
+  const planned = woPlannedMaterials(wo), issued = woIssuedMaterials(wo);
+  const matSkus = Object.keys(planned);
+  if (!matSkus.length) return toast('ใบสั่งผลิตนี้ไม่มีวัตถุดิบตาม BOM');
+  openModal(`<h2>📤 เบิกวัตถุดิบ / บันทึกผลิตรายวัน — ${esc(wo.no)}</h2>
+    <div class="field" style="max-width:200px"><label>วันที่</label><input type="date" id="wo-iss-date" value="${todayISO()}"></div>
+    <b style="font-size:12.5px;display:block;margin:8px 0 6px">① ผลิตวันนี้กี่ชิ้น</b>
+    <div class="tbl-wrap" style="margin-bottom:10px"><table>
+      <thead><tr><th>SKU</th><th>ชื่อ</th><th class="num">เป้ารวม</th><th class="num">ผลิตแล้ว</th><th class="num" style="width:110px">ผลิตวันนี้</th></tr></thead>
+      <tbody>${items.map((it, ix) => `<tr><td><b>${esc(it.sku)}</b></td><td class="small">${esc(it.name)}</td>
+        <td class="num">${fmt(it.qty)}</td><td class="num">${fmt(it.producedQty || 0)}</td>
+        <td class="num"><input type="number" id="wo-iss-prod-${ix}" value="0" min="0" style="width:90px;text-align:right" oninput="recalcWOIssueMaterials('${woId}')"></td></tr>`).join('')}</tbody></table></div>
+    <b style="font-size:12.5px;display:block;margin:10px 0 6px">② วัตถุดิบที่จะเบิก <span class="muted" style="font-weight:400">(คำนวณอัตโนมัติจากข้อ ① — แก้มือได้ แต่เบิกเกินคงเหลือไม่ได้)</span></b>
+    <div class="tbl-wrap" style="margin-bottom:10px"><table>
+      <thead><tr><th>วัตถุดิบ</th><th>ชื่อ</th><th class="num">เหลือต้องเบิก</th><th class="num">คงเหลือ W</th><th class="num" style="width:110px">เบิกวันนี้</th></tr></thead>
+      <tbody>${matSkus.map(sku => { const p = db.products.find(x => x.sku === sku); const rem = planned[sku] - (issued[sku] || 0); const w = p ? (p.stock.W || 0) : 0;
+        return `<tr><td><b>${esc(sku)}</b></td><td class="small">${esc(p ? p.name : sku)}</td>
+        <td class="num">${fmt(rem)}</td><td class="num small"${w <= 0 ? ' style="color:var(--bad)"' : ''}>${fmt(w)}</td>
+        <td class="num"><input type="number" id="wo-iss-mat-${sku}" value="0" min="0" max="${w}" style="width:90px;text-align:right"></td></tr>`; }).join('')}</tbody></table></div>
+    <div class="field"><label>หมายเหตุ</label><input id="wo-iss-note" placeholder="เช่น กะเช้า / ล็อตที่ ..."></div>
+    <div class="modal-foot" style="justify-content:flex-end;gap:8px">
+      <button class="btn" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn p" onclick="saveWOIssue('${woId}')">💾 บันทึกเบิก/ผลิต</button></div>`, true);
+};
+window.recalcWOIssueMaterials = function(woId){
+  const wo = db.workOrders.find(x => x.id === woId); if (!wo) return;
+  const items = wo.items || [{ sku: wo.sku, qty: wo.qty, bom: wo.bom }];
+  const agg = {};
+  items.forEach((it, ix) => { const el = document.getElementById('wo-iss-prod-' + ix); const q = el ? (parseInt(el.value) || 0) : 0;
+    const bom = it.bom || (db.products.find(p=>p.sku===it.sku)||{}).bom || [];
+    bom.forEach(c => { agg[c.sku] = (agg[c.sku] || 0) + c.qty * q; }); });
+  Object.keys(woPlannedMaterials(wo)).forEach(sku => { const el = document.getElementById('wo-iss-mat-' + sku);
+    if (el) { const p = db.products.find(x => x.sku === sku); const w = p ? (p.stock.W || 0) : 0;
+      el.value = Math.min(agg[sku] || 0, w); } });   // ไม่ให้เกินคงเหลือ W ตั้งแต่คำนวณ
+};
+window.saveWOIssue = function(woId){
+  const wo = db.workOrders.find(x => x.id === woId); if (!wo) return;
+  const items = wo.items || [{ sku: wo.sku, name: wo.skuName || wo.sku, qty: wo.qty, producedQty: wo.producedQty || 0, bom: wo.bom }];
+  const date = (document.getElementById('wo-iss-date').value) || todayISO();
+  const note = (document.getElementById('wo-iss-note').value || '').trim();
+  const outputs = [];
+  items.forEach((it, ix) => { const q = parseInt(document.getElementById('wo-iss-prod-' + ix).value) || 0; if (q > 0) outputs.push({ sku: it.sku, qty: q }); });
+  const materials = [];
+  Object.keys(woPlannedMaterials(wo)).forEach(sku => { const el = document.getElementById('wo-iss-mat-' + sku); const q = el ? (parseInt(el.value) || 0) : 0; if (q > 0) materials.push({ sku, qty: q }); });
+  if (!materials.length && !outputs.length) return toast('ยังไม่ได้กรอกจำนวนเบิก/ผลิต');
+  // บล็อกการเบิกเกินคงเหลือ W — กันสต็อกติดลบ (ตัดต้นเหตุ)
+  const short = materials.map(m => { const p = db.products.find(x => x.sku === m.sku); return { sku: m.sku, have: p ? (p.stock.W || 0) : 0, want: m.qty }; }).filter(s => s.want > s.have);
+  if (short.length) return toast('เบิกไม่ได้ วัตถุดิบไม่พอใน W: ' + short.map(s => s.sku + ' (มี ' + fmt(s.have) + ' ขอ ' + fmt(s.want) + ')').join(', ') + ' — ลดจำนวน หรือรับวัตถุดิบเข้าก่อน');
+  const now = new Date().toISOString();
+  materials.forEach(m => { const p = db.products.find(x => x.sku === m.sku); if (!p) return;
+    p.stock.W = (p.stock.W || 0) - m.qty;
+    db.moves.push({ id: uid(), date: now, type: 'issue', sku: m.sku, qty: m.qty, channel: 'W', actor: recallActor() || 'WO', doc_ref: wo.no, note: 'ทยอยเบิก ' + wo.no + (note ? ' — ' + note : '') }); });
+  outputs.forEach(o => { const fp = db.products.find(x => x.sku === o.sku); if (!fp) return;
+    fp.stock.O = (fp.stock.O || 0) + o.qty;
+    db.moves.push({ id: uid(), date: now, type: 'in', sku: o.sku, qty: o.qty, channel: 'O', actor: recallActor() || 'WO', doc_ref: wo.no, note: 'ผลิตรายวัน ' + wo.no });
+    const it = items.find(x => x.sku === o.sku); if (it) it.producedQty = (it.producedQty || 0) + o.qty; });
+  if (!wo.items) wo.producedQty = (wo.producedQty || 0) + (outputs[0] ? outputs[0].qty : 0);
+  else wo.producedQty = items.reduce((s, it) => s + (it.producedQty || 0), 0);
+  wo.issues = wo.issues || [];
+  wo.issues.push({ id: uid(), date, actor: recallActor() || 'WO', note, materials, outputs });
+  if (wo.status === 'ร่าง') { wo.status = 'กำลังผลิต'; wo.startDate = wo.startDate || todayISO(); }
+  save(); closeModal(); RENDER.workorder(); toast('บันทึกการเบิก/ผลิตรายวันแล้ว ✓');
+  if (typeof WH3D !== 'undefined' && WH3D.inited) { WH3D.pmap = {}; db.products.forEach(x => WH3D.pmap[x.sku] = x); wh3dRefreshBoxes(); }
+};
+
+/* ===== AGENT (ผู้ช่วยแจ้งเตือนสต็อก) ===== */
+const AGENT_SEV={ critical:{e:'🔴',c:'#DC2626',t:'วิกฤต'}, high:{e:'🟠',c:'#EA580C',t:'สูง'},
+  medium:{e:'🟡',c:'#CA8A04',t:'กลาง'}, low:{e:'🔵',c:'#2563EB',t:'ต่ำ'}, info:{e:'⚪',c:'#6B7280',t:'ข้อมูล'} };
+const AGENT_RULES={low_stock:'📦 สต็อก / จุดสั่งซื้อ', velocity:'🔥 ความเร็วขาย / Dead stock', anomaly:'🔍 ความผิดปกติข้อมูล', mrp:'🏭 วางแผนวัตถุดิบ (MRP)'};
+RENDER.agent=function(){
+  const host=$('#page-agent');
+  if(!IS_SERVER){ host.innerHTML='<div class="card"><h3>🤖 ผู้ช่วย Agent</h3><p class="muted small">ใช้ได้เฉพาะโหมดเซิร์ฟเวอร์ (http://localhost:8000)</p></div>'; return; }
+  host.innerHTML='<div class="card"><p class="muted">⏳ กำลังโหลดผลตรวจจาก Agent…</p></div>';
+  loadAgentState();
+};
+async function loadAgentState(){
+  const host=$('#page-agent'); let st={};
+  try{ const r=await API.get('/api/agent/state'); if(r.ok) st=await r.json(); }catch(e){ st={}; }
+  const findings=(st&&st.findings)||[]; const sev=(st.summary&&st.summary.by_severity)||{};
+  const delta=st.delta||{new:0,resolved:0,ongoing:0};
+  const upd=st.updated_at?new Date(st.updated_at).toLocaleString('th-TH'):'—';
+  if(!st.updated_at && !findings.length){
+    host.innerHTML=`<div class="card"><h3>🤖 ผู้ช่วย Agent ยังไม่เคยรัน</h3>
+      <p class="small muted">รันจากโฟลเดอร์ BTP-ERP-Server: <code>python -m agent.loop --once</code> หรือดับเบิลคลิก <code>agent/run_agent.bat</code> แล้วกดรีเฟรช</p>
+      <button class="btn p" style="margin-top:12px" onclick="loadAgentState()">↻ รีเฟรช</button></div>`; return;
+  }
+  const kpi=(l,v,c,sub)=>`<div class="card kpi"><div class="lbl">${l}</div><div class="val"${c?` style="color:${c}"`:''}>${v}</div><div class="sub">${sub||''}</div></div>`;
+  let sections='';
+  for(const rule of ['low_stock','velocity','anomaly','mrp']){
+    const items=findings.filter(f=>f.rule===rule); if(!items.length) continue;
+    sections+=`<div class="card"><h3>${AGENT_RULES[rule]||rule} (${items.length})</h3><div class="tbl-wrap"><table>
+      <thead><tr><th>ระดับ</th><th>SKU</th><th>ชื่อสินค้า</th><th>รายละเอียด</th></tr></thead><tbody>${items.map(agentRow).join('')}</tbody></table></div></div>`;
+  }
+  const deltaCard=st.delta?`<div class="card" style="border-left:3px solid #2563EB"><h3>เทียบกับรอบก่อน (Feedback)</h3>
+    <div class="small" style="line-height:2">🆕 ใหม่ <b>${delta.new}</b> • ✅ คลี่คลายแล้ว <b>${delta.resolved}</b> • ➡️ ค้างเดิม <b>${delta.ongoing}</b></div></div>`:'';
+  host.innerHTML=`<div class="toolbar"><div class="small muted">อัปเดตล่าสุด: <b>${upd}</b> • รอบที่ ${st.cycle||'—'} • โหมด ${esc(st.mode||'')}</div>
+    <div class="spacer"></div><button class="btn p" onclick="loadAgentState()">↻ รีเฟรช</button></div>
+  <div class="grid g4 mb">
+    ${kpi('รายการที่พบทั้งหมด',fmt(findings.length),'','จากการตรวจรอบล่าสุด')}
+    ${kpi('🔴 วิกฤต',fmt(sev.critical||0),'#DC2626','ต้องจัดการด่วน')}
+    ${kpi('🟠 สูง',fmt(sev.high||0),'#EA580C','ควรสั่งเพิ่ม/ขายเร็ว')}
+    ${kpi('🆕 ใหม่รอบนี้',fmt(delta.new||0),'#2563EB','✅ คลี่คลาย '+fmt(delta.resolved||0))}
+  </div>${deltaCard}${sections||'<div class="card"><p class="muted">✅ ไม่พบปัญหาในรอบล่าสุด</p></div>'}`;
+}
+function agentRow(f){
+  const s=AGENT_SEV[f.severity]||AGENT_SEV.info;
+  return `<tr><td><span class="bdg" style="background:${s.c}1a;color:${s.c};font-weight:700">${s.e} ${s.t}</span></td>
+    <td>${f.sku?('<b>'+esc(f.sku)+'</b>'):'<span class="muted">—</span>'}</td>
+    <td class="small">${esc(f.name||'')}</td><td class="small">${esc(f.message||'')}</td></tr>`;
+}
+
+/* ===== MRP (วางแผนความต้องการวัตถุดิบ) ===== */
+const MRP_STATUS={ expedite:{e:'🔴',t:'เร่งด่วน (สั่งไม่ทัน)',c:'#DC2626'}, release_now:{e:'🟠',t:'สั่งเลย',c:'#EA580C'}, future:{e:'🔵',t:'สั่งภายหลัง',c:'#2563EB'} };
+const MRP_KIND={ shortage:'ขาดวัตถุดิบ', late_po:'PO มาช้า', expedite:'ต้องเร่ง', partial_build:'ผลิตได้บางส่วน', orphan_component:'BOM อ้าง SKU ไม่มีจริง' };
+RENDER.mrp=function(){
+  const host=$('#page-mrp');
+  if(!IS_SERVER){ host.innerHTML='<div class="card"><h3>🏭 MRP</h3><p class="muted small">ใช้ได้เฉพาะโหมดเซิร์ฟเวอร์ (http://localhost:8000)</p></div>'; return; }
+  host.innerHTML='<div class="card"><p class="muted">⏳ กำลังคำนวณแผนวัตถุดิบจาก BOM + สต็อก + WO + PO…</p></div>';
+  loadMrpPlan();
+};
+async function loadMrpPlan(){
+  const host=$('#page-mrp'); let plan;
+  try{ const r=await API.get('/api/mrp/plan'); if(!r.ok) throw 0; plan=await r.json(); }
+  catch(e){ host.innerHTML='<div class="card"><p class="muted">❌ คำนวณแผน MRP ไม่ได้</p></div>'; return; }
+  window._mrpPlan=plan; const s=plan.summary||{}, orders=plan.planned_orders||[], exc=plan.exceptions||[];
+  const kpi=(l,v,c,sub)=>`<div class="card kpi"><div class="lbl">${l}</div><div class="val"${c?` style="color:${c}"`:''}>${v}</div><div class="sub">${sub||''}</div></div>`;
+  const excRows=exc.map(e=>{ const sev=(AGENT_SEV&&AGENT_SEV[e.severity])||{e:'⚪',c:'#6B7280'};
+    return `<tr><td>${sev.e} ${e.severity}</td><td>${MRP_KIND[e.kind]||e.kind}</td><td><b>${esc(e.sku||e.wo||'—')}</b></td><td class="small">${esc(e.message||'')}</td></tr>`; }).join('');
+  const ordRows=orders.map(o=>{ const st=MRP_STATUS[o.status]||{e:'',t:o.status,c:''};
+    return `<tr><td style="text-align:center"><input type="checkbox" id="mrp-chk-${o.sku}" checked></td>
+      <td><span class="bdg" style="background:${st.c}1a;color:${st.c};font-weight:700">${st.e} ${st.t}</span></td>
+      <td><b>${esc(o.sku)}</b></td><td class="small">${esc((o.name||'').slice(0,26))}</td><td class="small">${o.class}</td>
+      <td class="num">${fmt(o.gross_req)}</td><td class="num">${fmt(o.on_hand)}</td><td class="num">${fmt(o.scheduled_receipts)}</td>
+      <td class="num"><b>${fmt(o.order_qty)}</b></td><td class="small">${esc(o.need_date)}</td></tr>`; }).join('');
+  host.innerHTML=`<div class="toolbar"><div class="small muted">คำนวณเมื่อ ${plan.generated_at?new Date(plan.generated_at).toLocaleString('th-TH'):'—'} • horizon ${esc(plan.horizon_today||'')}</div>
+    <div class="spacer"></div><button class="btn" onclick="loadMrpPlan()">↻ คำนวณใหม่</button>
+    <button class="btn p" onclick="createMRFromMrp()">➕ สร้างใบขอซื้อจากที่เลือก</button></div>
+  <div class="grid g4 mb">
+    ${kpi('คำสั่งซื้อแนะนำ',fmt(s.planned_orders||0),'','Planned Orders')}
+    ${kpi('🔴 ต้องเร่ง',fmt((s.by_status&&s.by_status.expedite)||0),'#DC2626','สั่งปกติไม่ทัน')}
+    ${kpi('ข้อยกเว้น',fmt(s.exceptions||0),'#EA580C','ต้องจัดการ')}
+    ${kpi('มูลค่าประมาณ','฿'+fmt(Math.round(s.est_total_cost||0)),'','รวมที่แนะนำสั่ง')}
+  </div>
+  ${exc.length?`<div class="card"><h3>⚠️ ข้อยกเว้นที่ต้องจัดการ</h3><div class="tbl-wrap"><table>
+    <thead><tr><th>ระดับ</th><th>ชนิด</th><th>SKU/WO</th><th>รายละเอียด</th></tr></thead><tbody>${excRows}</tbody></table></div></div>`:''}
+  <div class="card"><h3>📦 คำสั่งซื้อที่แนะนำ (เลือกเพื่อสร้างใบขอซื้อ)</h3>
+    ${orders.length?`<div class="tbl-wrap"><table>
+      <thead><tr><th></th><th>สถานะ</th><th>SKU</th><th>ชื่อ</th><th>คลาส</th><th class="num">ต้องใช้</th><th class="num">คงเหลือ</th><th class="num">PO ค้าง</th><th class="num">สั่ง</th><th>ใช้ภายใน</th></tr></thead>
+      <tbody>${ordRows}</tbody></table></div>`:'<p class="muted">✅ วัตถุดิบเพียงพอตามแผนผลิตปัจจุบัน — ไม่มีรายการต้องสั่ง</p>'}</div>`;
+}
+function createMRFromMrp(){
+  const plan=window._mrpPlan; if(!plan) return;
+  const chosen=(plan.planned_orders||[]).filter(o=>{ const c=document.getElementById('mrp-chk-'+o.sku); return c&&c.checked; });
+  if(!chosen.length) return toast('เลือกอย่างน้อย 1 รายการ');
+  const openMrp=new Set();
+  (db.materialReqs||[]).forEach(mr=>{ if(mr.source==='MRP'&&(mr.status==='รอดำเนินการ'||mr.status==='อนุมัติแล้ว')) (mr.items||[]).forEach(i=>openMrp.add(i.sku)); });
+  const items=[]; let skipped=0;
+  chosen.forEach(o=>{ if(openMrp.has(o.sku)){ skipped++; return; } const p=db.products.find(x=>x.sku===o.sku);
+    items.push({sku:o.sku, name:o.name||o.sku, qty:o.order_qty, currentStock:p?(p.stock.W||0):0}); });
+  if(!items.length) return toast('รายการที่เลือกมีใบขอซื้อค้างอยู่แล้วทั้งหมด ('+skipped+')');
+  const mr={ id:uid(), no:docNo('MR','mr'), date:todayISO(), purpose:'ผลิต', requestedBy:sessionStorage.getItem('btp_user_name')||'MRP',
+    items, note:'สร้างอัตโนมัติจาก MRP ('+(plan.horizon_today||todayISO())+')', status:'รอดำเนินการ', source:'MRP' };
+  db.materialReqs.push(mr); save();
+  toast('สร้างใบขอซื้อ '+mr.no+' ('+items.length+' รายการ'+(skipped?(', ข้ามซ้ำ '+skipped):'')+') ✓');
+  go('materialreq');
+}
+
 RENDER.materialreq=function(){
   $('#page-materialreq').innerHTML=`
   <div class="toolbar"><div class="spacer"></div><button class="btn p" onclick="newMR()">＋ สร้างใบขอซื้อ</button></div>
@@ -3087,8 +3059,6 @@ RENDER.workorder = function() {
   
   <div class="toolbar" style="margin-top:16px">
     <div class="spacer"></div>
-    <button class="btn" onclick="exportWoExcel()" title="ส่งออกรายการ WO ทั้งหมดเป็น Excel">📊 Excel</button>
-    <button class="btn" onclick="exportWoPDF()" title="ส่งออกรายการ WO ทั้งหมดเป็น PDF">🖨️ PDF</button>
     <button class="btn p" onclick="newWO()">＋ สร้างใบสั่งผลิต</button>
   </div>
   <div class="card">
@@ -3396,11 +3366,14 @@ window.viewWoDetails = function(id) {
       </table>
     </div>
     
+    ${woIssueSectionHtml(wo)}
+
     ${wo.note ? `<div style="background:var(--bg); padding:10px; border-radius:6px; margin-bottom:12px; font-size:12px"><b>หมายเหตุ:</b> ${esc(wo.note)}</div>` : ''}
-    
+
     <div class="modal-foot" style="justify-content:space-between">
       <div>
         <button class="btn p" onclick="printMaterialPickList('${wo.id}')">📋 พิมพ์ใบจัดของ</button>
+        ${wo.status !== 'เสร็จสิ้น' && wo.status !== 'ยกเลิก' && Object.keys(woPlannedMaterials(wo)).length ? `<button class="btn p" onclick="openWOIssue('${wo.id}')">📤 เบิก/บันทึกผลิตวันนี้</button>` : ''}
       </div>
       <div>
         <button class="btn" onclick="closeModal()">ปิด</button>
@@ -3651,9 +3624,18 @@ function startWO(id) {
 function completeWO(id) {
   const wo = db.workOrders.find(x => x.id === id);
   if (!wo) return;
-  
+
+  // ถ้าทยอยเบิก/ผลิตรายวันมาแล้ว — ปิดงานเฉย ๆ ไม่ตัดสต็อกซ้ำ
+  if ((wo.issues || []).length) {
+    if (!confirm('WO นี้ทยอยเบิก/ผลิตรายวันแล้ว ' + wo.issues.length + ' รอบ\nปิดงานเป็น "เสร็จสิ้น"? (ไม่ตัดสต็อกเพิ่ม)')) return;
+    wo.status = 'เสร็จสิ้น';
+    wo.completedDate = todayISO();
+    save(); RENDER.workorder(); toast('ปิดงานเสร็จสิ้นแล้ว ✓');
+    return;
+  }
+
   const items = wo.items || [{ sku: wo.sku, name: wo.skuName || wo.sku, qty: wo.qty, producedQty: 0, bom: wo.bom }];
-  
+
   openModal(`
     <h2 style="margin-bottom:12px">บันทึกเสร็จสิ้นการผลิต: ${esc(wo.no)}</h2>
     <p class="muted" style="font-size:12px; margin-bottom:12px">กรุณาระบุจำนวนสินค้าที่ผลิตได้จริงสำหรับแต่ละรายการ เพื่อเพิ่มเข้าคลังสินค้า Online (O) และตัดวัตถุดิบที่ใช้จริงจากคลังสินค้า W</p>
@@ -3774,119 +3756,6 @@ window.saveCompleteWO = function(id) {
 };
 
 function cancelWO(id){ const wo=db.workOrders.find(x=>x.id===id); if(!wo||!confirm('ยกเลิก '+wo.no+'?'))return; wo.status='ยกเลิก'; save(); RENDER.workorder(); toast('ยกเลิกแล้ว'); }
-
-function exportWoExcel() {
-  const wos = (db.workOrders || []).slice(-200).reverse();
-  if (!wos.length) return toast('ไม่มีข้อมูลใบสั่งผลิต');
-
-  const header = ['เลขที่ WO','ลูกค้า','ผู้รับผิดชอบ (PIC)','วันที่สั่งผลิต','วันที่ส่งมอบ','รายการสินค้า (SKU x จำนวน)','สั่งผลิตรวม','ผลิตแล้วรวม','สถานะ','วันที่เริ่มผลิต','วันที่เสร็จสิ้น','หมายเหตุ'];
-
-  const rows = wos.map(wo => {
-    const items = wo.items || [{ sku: wo.sku, name: wo.skuName || wo.sku, qty: wo.qty, producedQty: wo.producedQty || 0 }];
-    const totalQty = items.reduce((s, it) => s + it.qty, 0);
-    const totalProduced = items.reduce((s, it) => s + (it.producedQty || 0), 0);
-    const itemsText = items.map(it => `${it.sku} x${it.qty}`).join(', ');
-    return [
-      wo.no, wo.customer || '', wo.pic || '',
-      wo.date || '', wo.deliveryDate || '',
-      itemsText, totalQty, totalProduced,
-      wo.status, wo.startDate || '', wo.completedDate || '', wo.note || ''
-    ];
-  });
-
-  const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
-  ws['!cols'] = [12,18,16,12,12,40,10,10,10,12,12,20].map(w => ({ wch: w }));
-
-  // Style header row bold
-  const range = XLSX.utils.decode_range(ws['!ref']);
-  for (let C = range.s.c; C <= range.e.c; C++) {
-    const cell = ws[XLSX.utils.encode_cell({ r: 0, c: C })];
-    if (cell) cell.s = { font: { bold: true }, fill: { fgColor: { rgb: 'D9EAF7' } } };
-  }
-
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Work Orders');
-
-  // Sheet 2: BOM summary per WO
-  const bomRows = [['เลขที่ WO','SKU วัตถุดิบ','ชื่อวัตถุดิบ','จำนวนที่ใช้รวม']];
-  wos.forEach(wo => {
-    const items = wo.items || [{ sku: wo.sku, qty: wo.qty, bom: wo.bom }];
-    const req = {};
-    items.forEach(it => (it.bom||[]).forEach(c => { req[c.sku] = (req[c.sku]||0) + c.qty * it.qty; }));
-    Object.entries(req).forEach(([sku, qty]) => {
-      const p = db.products.find(x => x.sku === sku);
-      bomRows.push([wo.no, sku, p ? p.name : sku, qty]);
-    });
-  });
-  const ws2 = XLSX.utils.aoa_to_sheet(bomRows);
-  ws2['!cols'] = [12,16,30,14].map(w => ({ wch: w }));
-  XLSX.utils.book_append_sheet(wb, ws2, 'BOM Summary');
-
-  XLSX.writeFile(wb, `WorkOrders_${todayISO()}.xlsx`);
-  toast('ดาวน์โหลด Excel แล้ว ✓');
-}
-
-function exportWoPDF() {
-  const wos = (db.workOrders || []).slice(-200).reverse();
-  if (!wos.length) return toast('ไม่มีข้อมูลใบสั่งผลิต');
-
-  const stColor = { 'ร่าง':'#64748b','กำลังผลิต':'#2490EF','เสร็จสิ้น':'#28A745','ยกเลิก':'#E24C4C' };
-
-  const tableRows = wos.map((wo, ix) => {
-    const items = wo.items || [{ sku: wo.sku, name: wo.skuName || wo.sku, qty: wo.qty, producedQty: wo.producedQty || 0 }];
-    const totalQty = items.reduce((s, it) => s + it.qty, 0);
-    const totalProduced = items.reduce((s, it) => s + (it.producedQty || 0), 0);
-    const itemsHtml = items.map(it => `${esc(it.sku)} ×${it.qty}`).join('<br>');
-    const color = stColor[wo.status] || '#64748b';
-    return `<tr style="background:${ix%2===0?'#fff':'#f8fafc'}">
-      <td>${esc(wo.no)}</td>
-      <td>${esc(wo.customer||'—')}<br><span style="color:#888;font-size:10px">${esc(wo.pic||'')}</span></td>
-      <td>${wo.date||'—'}<br><span style="color:#888;font-size:10px">ส่ง: ${wo.deliveryDate||'—'}</span></td>
-      <td>${itemsHtml}</td>
-      <td style="text-align:right">${fmt(totalQty)}</td>
-      <td style="text-align:right;color:#28A745">${fmt(totalProduced)}</td>
-      <td><span style="background:${color};color:#fff;padding:2px 8px;border-radius:10px;font-size:10px">${esc(wo.status)}</span></td>
-    </tr>`;
-  }).join('');
-
-  const printEl = $('#inv-print');
-  if (!printEl) return;
-
-  printEl.innerHTML = `
-    <div style="font-family:'Prompt','Inter',sans-serif;color:#000;padding:8mm;box-sizing:border-box;font-size:12px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;border-bottom:2px solid #2490EF;padding-bottom:10px">
-        <div>
-          <h2 style="margin:0;font-size:18px;font-weight:800;color:#2490EF">รายการใบสั่งผลิต (Work Orders)</h2>
-          <div style="color:#666;font-size:11px;margin-top:3px">BTP ERP — Butterfly Thai Perfume</div>
-        </div>
-        <div style="text-align:right;font-size:11px;color:#666">
-          <div>วันที่พิมพ์: ${thDate(todayISO())}</div>
-          <div>ทั้งหมด ${wos.length} รายการ</div>
-        </div>
-      </div>
-      <table style="width:100%;border-collapse:collapse;font-size:11px">
-        <thead>
-          <tr style="background:#2490EF;color:#fff">
-            <th style="padding:7px 8px;text-align:left;min-width:80px">เลขที่ WO</th>
-            <th style="padding:7px 8px;text-align:left">ลูกค้า / PIC</th>
-            <th style="padding:7px 8px;text-align:left">วันที่สั่ง / ส่งมอบ</th>
-            <th style="padding:7px 8px;text-align:left">สินค้าที่ผลิต</th>
-            <th style="padding:7px 8px;text-align:right;min-width:60px">สั่งผลิต</th>
-            <th style="padding:7px 8px;text-align:right;min-width:60px">ผลิตแล้ว</th>
-            <th style="padding:7px 8px;text-align:center;min-width:70px">สถานะ</th>
-          </tr>
-        </thead>
-        <tbody>${tableRows}</tbody>
-      </table>
-      <div style="margin-top:20px;font-size:10px;color:#aaa;text-align:center">— จบรายการ —</div>
-    </div>`;
-
-  let el = document.getElementById('_pps');
-  if (!el) { el = document.createElement('style'); el.id = '_pps'; document.head.appendChild(el); }
-  el.textContent = `@media print{@page{size:A4 landscape;margin:6mm;} #inv-print{display:block!important;}}`;
-  window.onafterprint = () => { el.textContent = ''; window.onafterprint = null; };
-  setTimeout(() => window.print(), 200);
-}
 
 /* ============ USER MANAGEMENT (admin only, server mode) ============ */
 RENDER.users = async function(){
@@ -4364,7 +4233,7 @@ RENDER.wh3d=function(){
   wh3dCalcHeat(); wh3dAutoAssign(); wh3dRefreshBoxes(); wh3dLegend(); wh3dResize();
 };
 /* ============ ช่องทางการเบิก (Channel Import) ============ */
-let _spCh='shopee',_spRaw=[],_spRows=[];
+let _spCh='shopee',_spRaw=[],_spRows=[],_ecomTab='overview';
 const SP_CHANNELS=[
   {id:'shopee',label:'Shopee',  icon:'🛍️',ch:'O',accept:'.xlsx'},
   {id:'lazada', label:'Lazada',  icon:'🟠',ch:'O',accept:'.xls,.xlsx'},
@@ -4758,135 +4627,267 @@ RENDER.tiktok = async function(){
   }
   pg.innerHTML=`<div class="card"><p class="muted small">กำลังโหลด...</p></div>`;
 
-  let cfg={}, tokens=[];
+  let ttCfg={}, spCfg={}, lzCfg={}, tokens=[];
   try {
-    const [rc,rt] = await Promise.all([
+    const [rTt, rSp, rLz, rTok] = await Promise.all([
       API.get('/api/integrations/tiktok/config'),
+      API.get('/api/integrations/shopee/config'),
+      API.get('/api/integrations/lazada/config'),
       API.get('/api/tokens'),
     ]);
-    if(rc.ok) cfg = await rc.json();
-    if(rt.ok) tokens = await rt.json();
-  } catch(e){}
+    if(rTt.ok) ttCfg = await rTt.json();
+    if(rSp.ok) spCfg = await rSp.json();
+    if(rLz.ok) lzCfg = await rLz.json();
+    if(rTok.ok) tokens = await rTok.json();
+  } catch(e){ console.error('E-commerce configs fetch failed:', e); }
 
   const ORIGIN = window.location.origin;
   const ENDPOINT = `${ORIGIN}/api/integrations/orders`;
 
-  pg.innerHTML=`
-  <!-- ══ Step banner ══ -->
-  <div style="background:linear-gradient(135deg,#1E293B,#0F172A);border-radius:10px;padding:20px 24px;margin-bottom:20px;color:#E2E8F0">
-    <div style="font-size:13px;font-weight:600;color:#60A5FA;margin-bottom:4px">วิธีที่เร็วที่สุด — ไม่ต้องรอ Partner approval</div>
-    <div style="font-size:22px;font-weight:700">🔗 Make.com + TikTok Shop</div>
-    <div style="font-size:12px;color:#94A3B8;margin-top:4px">ทำได้เลยวันนี้ · ฟรี · Auto-sync ทุกชั่วโมง</div>
-  </div>
+  // Draw sub-tabs inside E-commerce Connections page
+  const subTabs = [
+    {id: 'overview', label: 'ภาพรวม & API Webhooks', icon: '🔌'},
+    {id: 'shopee', label: 'Shopee Connector', icon: '🛍️'},
+    {id: 'lazada', label: 'Lazada Connector', icon: '🟠'},
+    {id: 'tiktok', label: 'TikTok Shop Direct', icon: '🎵'}
+  ].map(t => `<div class="tab ${_ecomTab===t.id?'active':''}" onclick="_ecomTab='${t.id}';RENDER.tiktok()" style="padding:8px 14px;font-size:12.5px">${t.icon} ${t.label}</div>`).join('');
 
-  <div class="grid g2">
+  let tabContent = '';
 
-    <!-- ── STEP 1: API Token ── -->
-    <div class="card">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-        <div style="width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">1</div>
-        <div style="font-weight:600;font-size:14px">สร้าง API Token สำหรับ Make.com</div>
-      </div>
-      <p class="small muted mb">Token คือรหัสที่ Make.com ใช้เรียก BTP ERP แทนการ login — สร้างครั้งเดียวใช้ได้ตลอด</p>
-
-      <div class="row mb" style="gap:8px">
-        <input id="tok-name" placeholder="ชื่อ token เช่น Make-TikTok" style="flex:1">
-        <button class="btn p" onclick="createApiToken()">＋ สร้าง Token</button>
-      </div>
-      <div id="tok-new" style="margin-bottom:12px"></div>
-
-      <!-- Token list -->
-      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Token ที่มีอยู่</div>
-      ${tokens.length ? `<div style="border:1px solid var(--border);border-radius:8px;overflow:hidden">
-        ${tokens.map(t=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px">
-          <span style="flex:1;font-weight:500">${esc(t.name)}</span>
-          <span class="muted" style="font-size:10px">${t.last_used?'ใช้ล่าสุด '+new Date(t.last_used).toLocaleDateString('th-TH'):'ยังไม่เคยใช้'}</span>
-          <button class="btn sm danger" onclick="revokeToken('${t.id}')">ลบ</button>
-        </div>`).join('')}
-      </div>` : `<div class="muted small" style="padding:12px;border:1px dashed var(--border);border-radius:8px;text-align:center">ยังไม่มี Token — กด "สร้าง Token" ด้านบน</div>`}
+  if(_ecomTab === 'overview'){
+    tabContent = `
+    <div style="background:linear-gradient(135deg,#2490EF,#1776C1);border-radius:10px;padding:20px 24px;margin-bottom:20px;color:#fff">
+      <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.8);margin-bottom:4px">เชื่อมต่อคำสั่งซื้อไร้รอยต่อผ่านระบบ API Webhook</div>
+      <div style="font-size:22px;font-weight:700">🔗 External Webhooks (Make.com / n8n / Zapier)</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.7);margin-top:4px">รองรับการซิงค์ออเดอร์และตัดสต็อกอัตโนมัติจากทุกช่องทางขาย</div>
     </div>
-
-    <!-- ── STEP 2: Make.com guide ── -->
-    <div class="card">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-        <div style="width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">2</div>
-        <div style="font-weight:600;font-size:14px">ตั้งค่า Make.com Scenario</div>
+    
+    <div class="grid g2">
+      <!-- ── STEP 1: API Token ── -->
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <div style="width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">1</div>
+          <div style="font-weight:600;font-size:14px">สร้าง API Token สำหรับ Webhook</div>
+        </div>
+        <p class="small muted mb">Token คือรหัสผ่านความปลอดภัยที่ระบบภายนอกใช้เรียก BTP ERP API — สร้างครั้งเดียวใช้ได้ตลอด</p>
+        <div class="row mb" style="gap:8px">
+          <input id="tok-name" placeholder="ชื่อ token เช่น Make-Shopee-Lazada" style="flex:1">
+          <button class="btn p" onclick="createApiToken()">＋ สร้าง Token</button>
+        </div>
+        <div id="tok-new" style="margin-bottom:12px"></div>
+        <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Token ทั้งหมดในระบบ</div>
+        ${tokens.length ? `<div style="border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          ${tokens.map(t=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px">
+            <span style="flex:1;font-weight:500">${esc(t.name)}</span>
+            <span class="muted" style="font-size:10px">${t.last_used?'ใช้ล่าสุด '+new Date(t.last_used).toLocaleDateString('th-TH'):'ยังไม่เคยใช้'}</span>
+            <button class="btn sm danger" onclick="revokeToken('${t.id}')">ลบ</button>
+          </div>`).join('')}
+        </div>` : `<div class="muted small" style="padding:12px;border:1px dashed var(--border);border-radius:8px;text-align:center">ยังไม่มี Token — กรุณาสร้างที่ด้านบน</div>`}
       </div>
 
-      <div style="display:flex;flex-direction:column;gap:10px">
-
-        <div style="background:var(--bg);border-radius:8px;padding:12px 14px">
-          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:6px">A. สมัคร Make.com (ฟรี)</div>
-          <a href="https://make.com" target="_blank" class="btn sm p" style="text-decoration:none">เปิด make.com →</a>
+      <!-- ── STEP 2: Endpoint details ── -->
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <div style="width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">2</div>
+          <div style="font-weight:600;font-size:14px">ข้อมูล Endpoint สำหรับเชื่อมต่อ</div>
         </div>
-
-        <div style="background:var(--bg);border-radius:8px;padding:12px 14px">
-          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:6px">B. สร้าง Scenario ใหม่</div>
-          <div class="small">Create new scenario → เพิ่ม module แรก:</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
-            <span class="bdg b-info">TikTok Shop</span>
-            <span style="font-size:12px;color:var(--muted);line-height:1.8">→</span>
-            <span class="bdg b-gray">Watch Orders</span>
-          </div>
-          <div class="small muted" style="margin-top:4px">เชื่อมบัญชี TikTok Seller (OAuth) · Status: <b>COMPLETED</b></div>
-        </div>
-
-        <div style="background:var(--bg);border-radius:8px;padding:12px 14px">
-          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:6px">C. เพิ่ม module HTTP</div>
-          <div class="small mb">เพิ่ม module: <b>HTTP → Make a request</b></div>
-          <div style="background:#0F172A;border-radius:6px;padding:10px 12px;font-size:11px;color:#94A3B8;font-family:monospace;line-height:1.8">
-            <span style="color:#60A5FA">URL:</span> ${esc(ENDPOINT)}<br>
+        <div style="background:var(--bg);border-radius:8px;padding:12px 14px;margin-bottom:12px">
+          <div class="small mb">ใช้สำหรับการส่งออเดอร์ (POST Request) จาก Make.com / n8n / Zapier:</div>
+          <div style="background:#0F172A;border-radius:6px;padding:10px 12px;font-size:11px;color:#94A3B8;font-family:monospace;line-height:1.8;word-break:break-all">
             <span style="color:#60A5FA">Method:</span> POST<br>
-            <span style="color:#60A5FA">Header:</span> Authorization: Bearer <span style="color:#F59E0B">[TOKEN จาก Step 1]</span><br>
+            <span style="color:#60A5FA">URL:</span> ${esc(ENDPOINT)}<br>
+            <span style="color:#60A5FA">Header:</span> Authorization: Bearer <span style="color:#F59E0B">[TOKEN จากช่องซ้าย]</span><br>
             <span style="color:#60A5FA">Body type:</span> JSON (application/json)
           </div>
         </div>
+        <div class="small muted">
+          💡 <b>วิธีการทำงาน:</b> เมื่อมีออเดอร์ใหม่เข้ามาจาก Shopee, Lazada หรือ TikTok, ระบบ Webhook จะเรียก API ด้านบน ระบบ ERP จะหักสต็อกสินค้า Online (O) โดยอัตโนมัติ และสร้างใบสั่งขายในระบบให้อัตโนมัติ
+        </div>
+      </div>
+    </div>`;
+  }
+  else if(_ecomTab === 'shopee'){
+    tabContent = `
+    <div style="background:linear-gradient(135deg,#FF4500,#FF5722);border-radius:10px;padding:20px 24px;margin-bottom:20px;color:#fff">
+      <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.8);margin-bottom:4px">เชื่อมต่อคำสั่งซื้อและยอดขาย</div>
+      <div style="font-size:22px;font-weight:700">🍊 Shopee Order Connector</div>
+    </div>
 
-        <div style="background:var(--bg);border-radius:8px;padding:12px 14px">
-          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:6px">D. Body Mapping (copy-paste)</div>
-          <div style="background:#0F172A;border-radius:6px;padding:10px 12px;font-size:10.5px;color:#94A3B8;font-family:monospace;line-height:1.7;white-space:pre-wrap">{
-  "source": "TikTok",
-  "order_id": "{{<b style='color:#60A5FA'>order_id</b>}}",
-  "date": "{{<b style='color:#60A5FA'>formatDate(create_time; YYYY-MM-DD)</b>}}",
-  "customer_name": "{{<b style='color:#60A5FA'>recipient_address.name</b>}}",
-  "customer_address": "{{<b style='color:#60A5FA'>recipient_address.full_address</b>}}",
-  "items": [{{<b style='color:#60A5FA'>map(line_items; item => </b>}}
+    <div class="grid g2">
+      <div class="card">
+        <h3>⚡ โหมดทดสอบด่วน (Simulation Mode)</h3>
+        <p class="small muted mb">ทดสอบระบบเชื่อมต่อและตัดสต็อกอัตโนมัติ โดยระบบจะจำลองออเดอร์สุ่มจาก Shopee เข้ามาทันทีเพื่อตรวจสอบความถูกต้อง</p>
+        <div style="text-align:center;padding:18px;border:1px dashed var(--border);border-radius:8px;background:var(--surface2)">
+          <button class="btn p" style="background:#FF5722;border-color:#FF5722" onclick="demoSync('Shopee', this)" id="sp-demo-btn">⚡ จำลองซิงค์ออเดอร์ Shopee (Demo)</button>
+          <div id="sp-demo-result" style="margin-top:12px;font-size:12.5px"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🔗 Make.com Payload Mapping for Shopee</h3>
+        <p class="small muted mb">คัดลอก Body JSON เพื่อนำไปแปะใน HTTP module (Make.com) ของคุณเพื่อส่งค่าเข้าสู่ระบบ:</p>
+        <div style="background:#0F172A;border-radius:6px;padding:10px 12px;font-size:10.5px;color:#94A3B8;font-family:monospace;line-height:1.7;white-space:pre-wrap">{
+  "source": "Shopee",
+  "order_id": "{{order_sn}}",
+  "date": "{{formatDate(create_time; YYYY-MM-DD)}}",
+  "customer_name": "{{buyer_username}}",
+  "customer_address": "{{recipient_address.full_address}}",
+  "items": [{{map(item_list; item => 
     {
-      "sku":   "{{<b style='color:#60A5FA'>item.seller_sku</b>}}",
-      "name":  "{{<b style='color:#60A5FA'>item.product_name</b>}}",
-      "qty":   {{<b style='color:#60A5FA'>item.quantity</b>}},
-      "price": {{<b style='color:#60A5FA'>item.sale_price</b>}}
+      "sku":   "{{item.model_sku}}",
+      "name":  "{{item.item_name}}",
+      "qty":   {{item.model_quantity_purchased}},
+      "price": {{item.model_original_price}}
     }
-  {{<b style='color:#60A5FA'>)</b>}}]
+  )}}]
 }</div>
-        </div>
-
-        <div style="background:var(--bg);border-radius:8px;padding:12px 14px">
-          <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:4px">E. ตั้ง Schedule</div>
-          <div class="small">Scenario settings → Run every <b>1 hour</b> (หรือ 15 min)</div>
-        </div>
-
       </div>
+
+      <div class="card" style="grid-column:1/-1">
+        <h3>⚙️ ตั้งค่า Direct Shopee API (สำหรับพาร์ทเนอร์อย่างเป็นทางการ)</h3>
+        <p class="small muted mb">ระบุข้อมูลเพื่อเปิดการเชื่อมต่อยิงตรงผ่าน Shopee Open API (ต้องได้สิทธิ์ Shopee Partner Approved เท่านั้น)</p>
+        <div class="grid g2" style="gap:12px">
+          <div class="field"><label>Shopee Partner ID</label><input id="sp-partnerid" value="${esc(spCfg.partner_id||'')}" placeholder="เช่น 12345"></div>
+          <div class="field"><label>App Key</label><input id="sp-appkey" value="${esc(spCfg.app_key||'')}" placeholder="กรอก App Key / ใส่ DEMO เพื่อจำลอง"></div>
+          <div class="field"><label>Shop ID</label><input id="sp-shopid" value="${esc(spCfg.shop_id||'')}" placeholder="กรอก Shopee Shop ID"></div>
+          <div class="field"><label>Shop Name</label><input id="sp-shopname" value="${esc(spCfg.shop_name||'')}" placeholder="ชื่อร้านค้าใน Shopee"></div>
+          <div class="field" style="grid-column:1/-1"><label>App Secret</label><input id="sp-secret" type="password" value="${spCfg.app_key?'••••••••':''}" placeholder="กรอก App Secret"></div>
+        </div>
+        <div class="row" style="margin-top:14px">
+          <button class="btn" onclick="saveEcomConfig('shopee')">💾 บันทึกการตั้งค่า</button>
+          <button class="btn" onclick="testEcomConnection('shopee')">🔌 ทดสอบเชื่อมต่อ</button>
+          <button class="btn" style="background:#FF5722;color:#fff;border-color:#FF5722" onclick="syncEcomOrders('shopee')">📥 ซิงค์ออเดอร์จริง</button>
+          <button class="btn" onclick="pushEcomStock('shopee')">📤 ดันอัปเดตสต็อก ERP → Shopee</button>
+        </div>
+        <div id="sp-action-result" style="margin-top:12px;font-size:12.5px"></div>
+      </div>
+    </div>`;
+  }
+  else if(_ecomTab === 'lazada'){
+    tabContent = `
+    <div style="background:linear-gradient(135deg,#00008B,#1E90FF);border-radius:10px;padding:20px 24px;margin-bottom:20px;color:#fff">
+      <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.8);margin-bottom:4px">เชื่อมต่อคำสั่งซื้อและยอดขาย</div>
+      <div style="font-size:22px;font-weight:700">🟠 Lazada Order Connector</div>
     </div>
 
-    <!-- ── Direct TikTok API (รอ approval) ── -->
-    <div class="card" style="grid-column:1/-1;opacity:.7">
-      <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:12px">🕐 รอ TikTok Partner Approval — Direct API (3-5 วัน)</div>
-      <div class="grid g2" style="gap:12px">
-        <div class="field"><label>App Key</label><input id="tt-appkey" value="${esc(cfg.app_key||'')}" placeholder="รอ approval"></div>
-        <div class="field"><label>Access Token</label><input id="tt-token" value="${esc(cfg.access_token||'')}" placeholder="รอ approval"></div>
-        <div class="field"><label>Shop ID</label><input id="tt-shopid" value="${esc(cfg.shop_id||'')}" placeholder="รอ approval"></div>
-        <div class="field"><label>App Secret</label><input id="tt-secret" type="password" value="${cfg.app_key?'••••••••':''}" placeholder="รอ approval"></div>
+    <div class="grid g2">
+      <div class="card">
+        <h3>⚡ โหมดทดสอบด่วน (Simulation Mode)</h3>
+        <p class="small muted mb">ทดสอบระบบเชื่อมต่อและตัดสต็อกอัตโนมัติ โดยระบบจะจำลองออเดอร์สุ่มจาก Lazada เข้ามาทันทีเพื่อตรวจสอบความถูกต้อง</p>
+        <div style="text-align:center;padding:18px;border:1px dashed var(--border);border-radius:8px;background:var(--surface2)">
+          <button class="btn p" style="background:#1E90FF;border-color:#1E90FF" onclick="demoSync('Lazada', this)" id="lz-demo-btn">⚡ จำลองซิงค์ออเดอร์ Lazada (Demo)</button>
+          <div id="lz-demo-result" style="margin-top:12px;font-size:12.5px"></div>
+        </div>
       </div>
-      <div class="row" style="margin-top:8px">
-        <button class="btn" onclick="ttSaveConfig()">💾 บันทึก</button>
-        <button class="btn" onclick="ttTest()">🔌 ทดสอบ</button>
-        <button class="btn p" onclick="ttSyncOrders()" id="tt-sync-btn">📥 ซิงค์ Orders</button>
+
+      <div class="card">
+        <h3>🔗 Make.com Payload Mapping for Lazada</h3>
+        <p class="small muted mb">คัดลอก Body JSON เพื่อนำไปแปะใน HTTP module (Make.com) ของคุณเพื่อส่งค่าเข้าสู่ระบบ:</p>
+        <div style="background:#0F172A;border-radius:6px;padding:10px 12px;font-size:10.5px;color:#94A3B8;font-family:monospace;line-height:1.7;white-space:pre-wrap">{
+  "source": "Lazada",
+  "order_id": "{{order_id}}",
+  "date": "{{formatDate(created_at; YYYY-MM-DD)}}",
+  "customer_name": "{{address_shipping.first_name}} {{address_shipping.last_name}}",
+  "customer_address": "{{address_shipping.address1}} {{address_shipping.city}}",
+  "items": [{{map(order_items; item => 
+    {
+      "sku":   "{{item.sku}}",
+      "name":  "{{item.name}}",
+      "qty":   1,
+      "price": {{item.paid_price}}
+    }
+  )}}]
+}</div>
       </div>
-      <div id="tt-test-result" style="margin-top:8px"></div>
-      <div id="tt-sync-result" style="margin-top:6px"></div>
+
+      <div class="card" style="grid-column:1/-1">
+        <h3>⚙️ ตั้งค่า Direct Lazada API (Lazada Open Platform)</h3>
+        <p class="small muted mb">ตั้งค่าสำหรับระบบส่งข้อมูลโดยตรง (ต้องการ Developer Account ของ Lazada ในการอนุมัติแอป)</p>
+        <div class="grid g2" style="gap:12px">
+          <div class="field"><label>Lazada App Key</label><input id="lz-appkey" value="${esc(lzCfg.app_key||'')}" placeholder="กรอก App Key / ใส่ DEMO เพื่อจำลอง"></div>
+          <div class="field"><label>Shop ID / Seller ID</label><input id="lz-shopid" value="${esc(lzCfg.shop_id||'')}" placeholder="กรอก Lazada Seller ID"></div>
+          <div class="field"><label>Shop Name</label><input id="lz-shopname" value="${esc(lzCfg.shop_name||'')}" placeholder="ชื่อร้านค้า Lazada"></div>
+          <div class="field"><label>Access Token</label><input id="lz-token" value="${esc(lzCfg.access_token||'')}" placeholder="กรอก Access Token"></div>
+          <div class="field" style="grid-column:1/-1"><label>App Secret</label><input id="lz-secret" type="password" value="${lzCfg.app_key?'••••••••':''}" placeholder="กรอก App Secret"></div>
+        </div>
+        <div class="row" style="margin-top:14px">
+          <button class="btn" onclick="saveEcomConfig('lazada')">💾 บันทึกการตั้งค่า</button>
+          <button class="btn" onclick="testEcomConnection('lazada')">🔌 ทดสอบเชื่อมต่อ</button>
+          <button class="btn" style="background:#1E90FF;color:#fff;border-color:#1E90FF" onclick="syncEcomOrders('lazada')">📥 ซิงค์ออเดอร์จริง</button>
+          <button class="btn" onclick="pushEcomStock('lazada')">📤 ดันอัปเดตสต็อก ERP → Lazada</button>
+        </div>
+        <div id="lazada-action-result" style="margin-top:12px;font-size:12.5px"></div>
+      </div>
+    </div>`;
+  }
+  else if(_ecomTab === 'tiktok'){
+    tabContent = `
+    <div style="background:linear-gradient(135deg,#000000,#00F2FE,#FE2C55);border-radius:10px;padding:20px 24px;margin-bottom:20px;color:#fff">
+      <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.8);margin-bottom:4px">เชื่อมต่อคำสั่งซื้อและยอดขาย</div>
+      <div style="font-size:22px;font-weight:700">🎵 TikTok Shop Direct API</div>
     </div>
 
+    <div class="grid g2">
+      <div class="card">
+        <h3>⚡ โหมดทดสอบด่วน (Simulation Mode)</h3>
+        <p class="small muted mb">ทดสอบระบบเชื่อมต่อและตัดสต็อกอัตโนมัติ โดยระบบจะจำลองออเดอร์สุ่มจาก TikTok เข้ามาทันทีเพื่อตรวจสอบความถูกต้อง</p>
+        <div style="text-align:center;padding:18px;border:1px dashed var(--border);border-radius:8px;background:var(--surface2)">
+          <button class="btn p" style="background:#FE2C55;border-color:#FE2C55" onclick="demoSync('TikTok', this)" id="tt-demo-btn">⚡ จำลองซิงค์ออเดอร์ TikTok (Demo)</button>
+          <div id="tt-demo-result" style="margin-top:12px;font-size:12.5px"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🔗 Make.com Payload Mapping for TikTok</h3>
+        <p class="small muted mb">คัดลอก Body JSON สำหรับนำไปใช้งานใน Make.com scenario:</p>
+        <div style="background:#0F172A;border-radius:6px;padding:10px 12px;font-size:10.5px;color:#94A3B8;font-family:monospace;line-height:1.7;white-space:pre-wrap">{
+  "source": "TikTok",
+  "order_id": "{{order_id}}",
+  "date": "{{formatDate(create_time; YYYY-MM-DD)}}",
+  "customer_name": "{{recipient_address.name}}",
+  "customer_address": "{{recipient_address.full_address}}",
+  "items": [{{map(line_items; item => 
+    {
+      "sku":   "{{item.seller_sku}}",
+      "name":  "{{item.product_name}}",
+      "qty":   {{item.quantity}},
+      "price": {{item.sale_price}}
+    }
+  )}}]
+}</div>
+      </div>
+
+      <div class="card" style="grid-column:1/-1">
+        <h3>⚙️ ตั้งค่า Direct TikTok Shop API</h3>
+        <p class="small muted mb">การเชื่อมต่อตรงแบบยิง API (ต้องรอผ่านการพิจารณา TikTok Shop Partner App)</p>
+        <div class="grid g2" style="gap:12px">
+          <div class="field"><label>TikTok App Key</label><input id="tt-appkey" value="${esc(ttCfg.app_key||'')}" placeholder="กรอก App Key / ใส่ DEMO เพื่อจำลอง"></div>
+          <div class="field"><label>Access Token</label><input id="tt-token" value="${esc(ttCfg.access_token||'')}" placeholder="กรอก Access Token"></div>
+          <div class="field"><label>Shop ID</label><input id="tt-shopid" value="${esc(ttCfg.shop_id||'')}" placeholder="กรอก TikTok Shop ID"></div>
+          <div class="field"><label>Shop Name</label><input id="tt-shopname" value="${esc(ttCfg.shop_name||'')}" placeholder="ชื่อร้าน TikTok Shop"></div>
+          <div class="field" style="grid-column:1/-1"><label>App Secret</label><input id="tt-secret" type="password" value="${ttCfg.app_key?'••••••••':''}" placeholder="กรอก App Secret"></div>
+        </div>
+        <div class="row" style="margin-top:14px">
+          <button class="btn" onclick="saveEcomConfig('tiktok')">💾 บันทึกการตั้งค่า</button>
+          <button class="btn" onclick="testEcomConnection('tiktok')">🔌 ทดสอบเชื่อมต่อ</button>
+          <button class="btn" style="background:#FE2C55;color:#fff;border-color:#FE2C55" onclick="syncEcomOrders('tiktok')" id="tt-sync-btn">📥 ซิงค์ออเดอร์จริง</button>
+          <button class="btn" onclick="pushEcomStock('tiktok')" id="tt-push-btn">📤 ดันอัปเดตสต็อก ERP → TikTok</button>
+        </div>
+        <div id="tt-test-result" style="margin-top:12px;font-size:12.5px"></div>
+        <div id="tt-sync-result" style="margin-top:6px;font-size:12.5px"></div>
+        <div id="tt-push-result" style="margin-top:6px;font-size:12.5px"></div>
+      </div>
+    </div>`;
+  }
+
+  pg.innerHTML = `
+  <div class="card" style="margin-bottom:20px; padding: 14px 20px">
+    <div class="tabs" style="margin-bottom:0; border-bottom: none">
+      ${subTabs}
+    </div>
+  </div>
+  <div id="ecom-tab-content">
+    ${tabContent}
   </div>`;
 };
 
@@ -4904,75 +4905,128 @@ async function createApiToken(){
     </div>`;
   toast('สร้าง Token แล้ว — คัดลอกเก็บไว้ด้วย');
   $('#tok-name').value='';
+  RENDER.tiktok();
 }
+
 async function revokeToken(id){
-  if(!confirm('ลบ Token นี้? Make.com จะใช้งานไม่ได้')) return;
+  if(!confirm('ลบ Token นี้? ระบบเชื่อมโยงภายนอกจะใช้งานไม่ได้')) return;
   const r = await API.del(`/api/tokens/${id}`);
   if(r.ok){ RENDER.tiktok(); toast('ลบ Token แล้ว'); }
 }
-async function ttSaveConfig(){
+
+async function saveEcomConfig(platform){
+  const pf = platform === 'shopee' ? 'sp' : platform === 'lazada' ? 'lz' : 'tt';
   const body = {
-    app_key:   $('#tt-appkey').value.trim(),
-    shop_id:   $('#tt-shopid').value.trim(),
-    access_token: $('#tt-token').value.trim(),
-    shop_name: $('#tt-shopname').value.trim(),
+    app_key:      $(`#${pf}-appkey`).value.trim(),
+    shop_id:      $(`#${pf}-shopid`).value.trim(),
+    shop_name:    $(`#${pf}-shopname`).value.trim(),
   };
-  const secret = $('#tt-secret').value;
+  if(platform === 'shopee'){
+    body.partner_id = $('#sp-partnerid').value.trim();
+  }
+  if(platform === 'lazada' || platform === 'tiktok'){
+    body.access_token = $(`#${pf}-token`).value.trim();
+  }
+  const secret = $(`#${pf}-secret`).value;
   if(secret && !secret.includes('•')) body.app_secret = secret;
-  if(!body.app_key || !body.shop_id || !body.access_token)
-    return toast('กรอก App Key, Shop ID และ Access Token');
-  const r = await API.post('/api/integrations/tiktok/config', body);
-  if(r.ok){ toast('บันทึก Credentials แล้ว ✓'); RENDER.tiktok(); }
+  
+  if(!body.app_key || !body.shop_id)
+    return toast('กรอก App Key และ Shop ID');
+    
+  const r = await API.post(`/api/integrations/${platform}/config`, body);
+  if(r.ok){ toast('บันทึกการตั้งค่าสำเร็จ ✓'); RENDER.tiktok(); }
   else toast('บันทึกไม่สำเร็จ');
 }
 
-async function ttTest(){
-  const el = $('#tt-test-result');
+async function testEcomConnection(platform){
+  const pf = platform === 'shopee' ? 'sp' : platform === 'lazada' ? 'lz' : 'tt';
+  const el = $(`#${pf}-action-result`) || $(`#tt-test-result`);
   el.innerHTML = '<span class="muted small">กำลังทดสอบ...</span>';
   try {
-    const r = await API.post('/api/integrations/tiktok/test', {});
+    const r = await API.post(`/api/integrations/${platform}/test`, {});
     const d = await r.json();
     if(d.ok){
-      const shops = (d.shops||[]).map(s=>`<b>${esc(s.name||s.shop_name||'')}</b> (${s.id||s.shop_id||''})`).join(', ');
-      el.innerHTML = `<span class="bdg b-ok">เชื่อมต่อสำเร็จ</span> ${shops||''}`;
+      el.innerHTML = `<span class="bdg b-ok">เชื่อมต่อสำเร็จ</span> ร้านค้า: <b>${esc(d.shop_name || '')}</b>`;
     } else {
-      el.innerHTML = `<span class="bdg b-bad">เชื่อมต่อไม่ได้</span> <span class="small muted">${esc(d.message||'')} (code: ${d.code||''})</span>`;
+      el.innerHTML = `<span class="bdg b-bad">เชื่อมต่อไม่ได้</span> <span class="small muted">${esc(d.message||'')}</span>`;
     }
   } catch(e) { el.innerHTML = `<span class="bdg b-bad">Error: ${esc(e.message)}</span>`; }
 }
 
-async function ttSyncOrders(){
-  const btn = $('#tt-sync-btn'), el = $('#tt-sync-result');
-  btn.disabled = true; btn.textContent = '⏳ กำลังซิงค์...';
-  el.innerHTML = '';
+async function syncEcomOrders(platform){
+  const pf = platform === 'shopee' ? 'sp' : platform === 'lazada' ? 'lz' : 'tt';
+  const el = $(`#${pf}-action-result`) || $(`#tt-sync-result`);
+  el.innerHTML = '<span class="muted small">กำลังซิงค์...</span>';
   try {
-    const r = await API.post('/api/integrations/tiktok/sync-orders', {});
+    const r = await API.post(`/api/integrations/${platform}/sync-orders`, {});
     const d = await r.json();
     if(d.ok || d.created !== undefined){
-      el.innerHTML = `<span class="bdg b-ok">สำเร็จ</span> สร้างใหม่ <b>${d.created}</b> orders · ข้ามซ้ำ <b>${d.skipped}</b>`;
-      save();
+      el.innerHTML = `<span class="bdg b-ok">สำเร็จ</span> ซิงค์แล้ว <b>${d.total || 0}</b> orders · สร้างใหม่ <b>${d.created || 0}</b> · ข้ามซ้ำ <b>${d.skipped || 0}</b>`;
+      if(d.message) el.innerHTML += `<br><span class="small muted">${esc(d.message)}</span>`;
+      if(IS_SERVER){
+        const loaded = await loadFromServer();
+        load();
+        _setConnStatus(loaded);
+      } else {
+        save();
+      }
     } else {
       el.innerHTML = `<span class="bdg b-bad">ล้มเหลว</span> <span class="small muted">${esc(d.detail||JSON.stringify(d))}</span>`;
     }
   } catch(e){ el.innerHTML = `<span class="bdg b-bad">Error: ${esc(e.message)}</span>`; }
-  finally { btn.disabled=false; btn.textContent='📥 ซิงค์ Orders ตอนนี้'; }
 }
 
-async function ttPushStock(){
-  const btn = $('#tt-push-btn'), el = $('#tt-push-result');
-  btn.disabled=true; btn.textContent='⏳ กำลัง Push...';
-  el.innerHTML='';
+async function pushEcomStock(platform){
+  const pf = platform === 'shopee' ? 'sp' : platform === 'lazada' ? 'lz' : 'tt';
+  const el = $(`#${pf}-action-result`) || $(`#tt-push-result`);
+  el.innerHTML = '<span class="muted small">กำลังดันสต็อก...</span>';
   try {
-    const r = await API.post('/api/integrations/tiktok/push-stock', {});
+    const r = await API.post(`/api/integrations/${platform}/push-stock`, {});
     const d = await r.json();
     if(d.ok || d.updated !== undefined){
-      el.innerHTML = `<span class="bdg b-ok">สำเร็จ</span> อัปเดต <b>${d.updated}</b> SKUs · ข้าม <b>${d.skipped}</b>`;
-      if(d.errors?.length) el.innerHTML += `<br><span class="small muted">⚠️ ${d.errors.join(', ')}</span>`;
+      el.innerHTML = `<span class="bdg b-ok">สำเร็จ</span> อัปเดตสต็อกเรียบร้อย (อัปเดต <b>${d.updated || 0}</b> SKU · ข้าม <b>${d.skipped || 0}</b>)`;
     } else {
       el.innerHTML = `<span class="bdg b-bad">ล้มเหลว</span> <span class="small muted">${esc(d.detail||'')}</span>`;
     }
   } catch(e){ el.innerHTML = `<span class="bdg b-bad">Error: ${esc(e.message)}</span>`; }
-  finally { btn.disabled=false; btn.textContent='📤 Push Stock ตอนนี้'; }
+}
+
+async function demoSync(platform, btn){
+  const pf = platform === 'Shopee' ? 'sp' : platform === 'Lazada' ? 'lz' : 'tt';
+  const el = $(`#${pf}-demo-result`);
+  btn.disabled = true;
+  const oldText = btn.textContent;
+  btn.textContent = '⏳ กำลังจำลองออเดอร์...';
+  el.innerHTML = '';
+  try {
+    const r = await API.post('/api/integrations/demo-sync', { platform });
+    const d = await r.json();
+    if(d.ok){
+      el.innerHTML = `
+        <div style="background:var(--blue-light); border: 1px solid var(--blue-muted); border-radius: 6px; padding: 10px 12px; margin-top: 8px; color: var(--text)">
+          <div style="font-weight: 600; color: var(--blue); margin-bottom: 4px">✓ นำเข้าออเดอร์ขายจำลองสำเร็จ!</div>
+          <div class="small">
+            <b>เลขที่เอกสาร ERP:</b> ${esc(d.sale_no)}<br>
+            <b>รหัสออเดอร์ E-commerce:</b> ${esc(d.order_id)}<br>
+            <b>ลูกค้า:</b> ${esc(d.customer)}<br>
+            <b>จำนวนรายการสินค้า:</b> ${d.items_count} รายการ<br>
+            <span style="color:var(--success)">* ระบบได้หักสต็อกช่องทาง Online (O) และบันทึกประวัติการเดินสต็อกให้คุณแล้ว</span>
+          </div>
+        </div>`;
+      toast(`จำลองออเดอร์ ${platform} สำเร็จ ✓`);
+      if(IS_SERVER){
+        const loaded = await loadFromServer();
+        load();
+        _setConnStatus(loaded);
+      }
+    } else {
+      el.innerHTML = `<span class="bdg b-bad">ล้มเหลว</span> <span class="small muted">${esc(d.detail||JSON.stringify(d))}</span>`;
+    }
+  } catch(e){ el.innerHTML = `<span class="bdg b-bad">Error: ${esc(e.message)}</span>`; }
+  finally {
+    btn.disabled = false;
+    btn.textContent = oldText;
+  }
 }
 
 /* ============ INIT ============ */
@@ -5033,8 +5087,8 @@ const PAGE_SUB = {
   sales: () => `${db.sales.filter(s=>s.status!=='ยกเลิก').length} ออเดอร์`,
   delivery: () => `${(db.deliveries||[]).filter(d=>d.status==='ร่าง').length} รอส่ง`,
   payment: () => `${(db.payments||[]).length} รายการ`,
-  shopee: () => `นำเข้าออเดอร์จากช่องทางการขาย`,
-  tiktok: () => `เชื่อมต่อ TikTok Shop API — ซิงค์ Order และ Stock`,
+  shopee: () => `นำเข้าไฟล์ออเดอร์ (Excel) ช่องทางต่าง ๆ เพื่อตัดสต็อก`,
+  tiktok: () => `เชื่อมต่อ E-commerce API และเครื่องมือซิงค์อัตโนมัติ (Shopee, Lazada, TikTok Shop)`,
   materialreq: () => `${(db.materialReqs||[]).filter(m=>m.status==='รอดำเนินการ').length} ใบรออนุมัติ`,
   purchase: () => `${db.pos.filter(p=>p.status==='รอรับ').length} PO รอรับ`,
   workorder: () => `${(db.workOrders||[]).filter(w=>w.status==='กำลังผลิต').length} ใบกำลังผลิต`,
