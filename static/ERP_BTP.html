@@ -153,7 +153,45 @@ body {
   padding: 18px 18px 5px;
   text-transform: uppercase;
   letter-spacing: 0.7px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s ease, background-color 0.15s ease;
 }
+.nav-sec:hover {
+  color: var(--blue);
+  background-color: rgba(36, 144, 239, 0.04);
+}
+.nav-arrow {
+  font-size: 8px;
+  color: var(--dim);
+  transition: transform 0.2s ease;
+}
+.nav-group.collapsed .nav-arrow {
+  transform: rotate(-90deg);
+}
+.nav-sub {
+  display: block;
+}
+.nav-group.collapsed .nav-sub {
+  display: none;
+}
+
+/* mini-sidebar overrides: force submenus open when sidebar is in mini icon-only mode */
+@media (max-width: 860px) {
+  .nav-group.collapsed .nav-sub {
+    display: block !important;
+  }
+}
+@media (max-width: 480px) {
+  /* on mobile screen, when menu is open, respect the collapsed class */
+  .side.mob-open .nav-group.collapsed .nav-sub {
+    display: none !important;
+  }
+}
+
 
 /* ────── MAIN ────── */
 .main {
@@ -651,33 +689,61 @@ label {
       <p>Thai Perfume</p>
     </div>
   </div>
-  <div class="nav-sec">ภาพรวม</div>
-  <div class="nav-item active" data-page="dash"><span class="ic">📊</span><span class="t">แดชบอร์ด</span></div>
-  <div class="nav-sec">สต็อก (Stock)</div>
-  <div class="nav-item" data-page="scan"><span class="ic">📷</span><span class="t">Scan สินค้า</span></div>
-  <div class="nav-item" data-page="products"><span class="ic">🏷️</span><span class="t">สินค้า (Items)</span></div>
-  <div class="nav-item" data-page="inventory"><span class="ic">📦</span><span class="t">การเคลื่อนไหวสต็อก</span></div>
-  <div class="nav-item" data-page="stockrecon"><span class="ic">🔢</span><span class="t">ตรวจนับสต็อก</span></div>
-  <div class="nav-item" data-page="pricelist"><span class="ic">🏷️</span><span class="t">Price List</span></div>
-  <div class="nav-item" data-page="wh3d"><span class="ic">🏭</span><span class="t">3D คลังสินค้า</span></div>
-  <div class="nav-sec">การขาย (Selling)</div>
-  <div class="nav-item" data-page="customers"><span class="ic">👥</span><span class="t">ลูกค้า (Customer)</span></div>
-  <div class="nav-item" data-page="quotation"><span class="ic">📄</span><span class="t">ใบเสนอราคา</span></div>
-  <div class="nav-item" data-page="sales"><span class="ic">🛒</span><span class="t">ใบขาย (Sales Order)</span></div>
-  <div class="nav-item" data-page="delivery"><span class="ic">🚛</span><span class="t">ใบส่งของ (DN)</span></div>
-  <div class="nav-item" data-page="payment"><span class="ic">💳</span><span class="t">รับชำระเงิน</span></div>
-  <div class="nav-item" data-page="shopee"><span class="ic">🛍️</span><span class="t">นำเข้าช่องทาง</span></div>
-  <div class="nav-item" data-page="tiktok"><span class="ic">🎵</span><span class="t">TikTok Shop</span></div>
-  <div class="nav-sec">การจัดซื้อ (Buying)</div>
-  <div class="nav-item" data-page="materialreq"><span class="ic">📋</span><span class="t">ใบขอซื้อ (MR)</span></div>
-  <div class="nav-item" data-page="purchase"><span class="ic">🚚</span><span class="t">ใบสั่งซื้อ (PO)</span></div>
-  <div class="nav-sec">การผลิต (MFG)</div>
-  <div class="nav-item" data-page="workorder"><span class="ic">⚙️</span><span class="t">ใบสั่งผลิต (WO)</span></div>
-  <div class="nav-sec">การเงิน (Accounts)</div>
-  <div class="nav-item" data-page="acct"><span class="ic">🧾</span><span class="t">บัญชี & ภาษี</span></div>
-  <div class="nav-sec">ระบบ</div>
-  <div class="nav-item" data-page="settings"><span class="ic">⚙️</span><span class="t">ตั้งค่า</span></div>
-  <div class="nav-item" data-page="users" id="nav-users" style="display:none"><span class="ic">👤</span><span class="t">ผู้ใช้งาน</span></div>
+  <div class="nav-group" data-group="overview">
+    <div class="nav-sec"><span class="t">ภาพรวม</span><span class="nav-arrow">▼</span></div>
+    <div class="nav-sub">
+      <div class="nav-item active" data-page="dash"><span class="ic">📊</span><span class="t">แดชบอร์ด</span></div>
+    </div>
+  </div>
+  <div class="nav-group collapsed" data-group="stock">
+    <div class="nav-sec"><span class="t">สต็อก (Stock)</span><span class="nav-arrow">▼</span></div>
+    <div class="nav-sub">
+      <div class="nav-item" data-page="scan"><span class="ic">📷</span><span class="t">Scan สินค้า</span></div>
+      <div class="nav-item" data-page="products"><span class="ic">🏷️</span><span class="t">สินค้า (Items)</span></div>
+      <div class="nav-item" data-page="inventory"><span class="ic">📦</span><span class="t">การเคลื่อนไหวสต็อก</span></div>
+      <div class="nav-item" data-page="stockrecon"><span class="ic">🔢</span><span class="t">ตรวจนับสต็อก</span></div>
+      <div class="nav-item" data-page="pricelist"><span class="ic">🏷️</span><span class="t">Price List</span></div>
+      <div class="nav-item" data-page="wh3d"><span class="ic">🏭</span><span class="t">3D คลังสินค้า</span></div>
+    </div>
+  </div>
+  <div class="nav-group collapsed" data-group="selling">
+    <div class="nav-sec"><span class="t">การขาย (Selling)</span><span class="nav-arrow">▼</span></div>
+    <div class="nav-sub">
+      <div class="nav-item" data-page="customers"><span class="ic">👥</span><span class="t">ลูกค้า (Customer)</span></div>
+      <div class="nav-item" data-page="quotation"><span class="ic">📄</span><span class="t">ใบเสนอราคา</span></div>
+      <div class="nav-item" data-page="sales"><span class="ic">🛒</span><span class="t">ใบขาย (Sales Order)</span></div>
+      <div class="nav-item" data-page="delivery"><span class="ic">🚛</span><span class="t">ใบส่งของ (DN)</span></div>
+      <div class="nav-item" data-page="payment"><span class="ic">💳</span><span class="t">รับชำระเงิน</span></div>
+      <div class="nav-item" data-page="shopee"><span class="ic">🛍️</span><span class="t">นำเข้าช่องทาง</span></div>
+      <div class="nav-item" data-page="tiktok"><span class="ic">🎵</span><span class="t">TikTok Shop</span></div>
+    </div>
+  </div>
+  <div class="nav-group collapsed" data-group="buying">
+    <div class="nav-sec"><span class="t">การจัดซื้อ (Buying)</span><span class="nav-arrow">▼</span></div>
+    <div class="nav-sub">
+      <div class="nav-item" data-page="materialreq"><span class="ic">📋</span><span class="t">ใบขอซื้อ (MR)</span></div>
+      <div class="nav-item" data-page="purchase"><span class="ic">🚚</span><span class="t">ใบสั่งซื้อ (PO)</span></div>
+    </div>
+  </div>
+  <div class="nav-group collapsed" data-group="mfg">
+    <div class="nav-sec"><span class="t">การผลิต (MFG)</span><span class="nav-arrow">▼</span></div>
+    <div class="nav-sub">
+      <div class="nav-item" data-page="workorder"><span class="ic">⚙️</span><span class="t">ใบสั่งผลิต (WO)</span></div>
+    </div>
+  </div>
+  <div class="nav-group collapsed" data-group="accounts">
+    <div class="nav-sec"><span class="t">การเงิน (Accounts)</span><span class="nav-arrow">▼</span></div>
+    <div class="nav-sub">
+      <div class="nav-item" data-page="acct"><span class="ic">🧾</span><span class="t">บัญชี & ภาษี</span></div>
+    </div>
+  </div>
+  <div class="nav-group collapsed" data-group="system">
+    <div class="nav-sec"><span class="t">ระบบ</span><span class="nav-arrow">▼</span></div>
+    <div class="nav-sub">
+      <div class="nav-item" data-page="settings"><span class="ic">⚙️</span><span class="t">ตั้งค่า</span></div>
+      <div class="nav-item" data-page="users" id="nav-users" style="display:none"><span class="ic">👤</span><span class="t">ผู้ใช้งาน</span></div>
+    </div>
+  </div>
   <div class="nav-divider"></div>
   <div class="nav-footer">
     <div class="nf-brand">Butterfly Thai Perfume</div>
@@ -1067,6 +1133,15 @@ const MODULES={
 };
 const RENDER={};
 $$('.nav-item').forEach(el=>el.addEventListener('click',()=>go(el.dataset.page)));
+
+// Category headings click toggle
+$$('.nav-sec').forEach(sec => {
+  sec.addEventListener('click', () => {
+    const group = sec.closest('.nav-group');
+    if (group) group.classList.toggle('collapsed');
+  });
+});
+
 function go(page){
   if (page !== 'scan' && _pgScanActive) stopScanner();
   $$('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===page));
@@ -1074,6 +1149,13 @@ function go(page){
   $('#page-title').textContent=TITLES[page];
   drawBreadcrumb(page);
   RENDER[page] && RENDER[page]();
+
+  // Auto-expand active page's group
+  const activeItem = document.querySelector(`.nav-item[data-page="${page}"]`);
+  if (activeItem) {
+    const group = activeItem.closest('.nav-group');
+    if (group) group.classList.remove('collapsed');
+  }
 }
 function drawBreadcrumb(page){
   const el=$('#breadcrumb'); if(!el) return;
