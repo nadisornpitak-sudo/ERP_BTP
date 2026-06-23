@@ -298,7 +298,7 @@ async def intake_order(body: dict, user_id: str = Depends(verify_token)):
                 db.setdefault("moves", []).append({
                     "id": _uid(), "date": now_iso, "type": "sale",
                     "sku": sku, "qty": qty, "channel": "O",
-                    "actor": f"{source} via Make.com", "lot": "",
+                    "actor": f"{source} Auto-sync", "lot": "",
                     "from_loc": "", "to_loc": "",
                     "doc_ref": f"{source[:3].upper()}-{order_id[-6:]}",
                     "note": f"{source} Order #{order_id}",
