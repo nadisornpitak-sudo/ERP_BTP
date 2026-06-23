@@ -4897,13 +4897,18 @@ async function createApiToken(){
   const r = await API.post('/api/tokens', {name});
   if(!r.ok){ toast('สร้างไม่สำเร็จ'); return; }
   const d = await r.json();
-  $('#tok-new').innerHTML=`
-    <div style="background:#0F172A;border:1px solid #334155;border-radius:8px;padding:14px">
-      <div style="color:#F59E0B;font-weight:600;font-size:12px;margin-bottom:6px">⚠️ คัดลอก Token นี้ทันที — แสดงครั้งเดียวเท่านั้น!</div>
-      <code style="display:block;background:#1E293B;color:#4ADE80;padding:10px 14px;border-radius:6px;font-size:12px;word-break:break-all;margin-bottom:8px">${esc(d.token)}</code>
-      <button onclick="navigator.clipboard.writeText('${esc(d.token)}').then(()=>toast('คัดลอกแล้ว ✓'))" class="btn sm p">📋 คัดลอก</button>
-    </div>`;
-  toast('สร้าง Token แล้ว — คัดลอกเก็บไว้ด้วย');
+  // แสดงใน modal — กันหายเพราะ RENDER.tiktok() re-render
+  openModal(`
+    <h2 style="color:#F59E0B">🔑 Token สร้างแล้ว — คัดลอกทันที!</h2>
+    <p class="small muted" style="margin:8px 0 12px">แสดงครั้งเดียวเท่านั้น ปิด modal แล้วจะไม่สามารถดูได้อีก</p>
+    <div style="background:#0F172A;border:1px solid #334155;border-radius:8px;padding:14px;margin-bottom:12px">
+      <div style="color:#94A3B8;font-size:11px;margin-bottom:6px">ชื่อ: ${esc(d.name)}</div>
+      <code style="display:block;background:#1E293B;color:#4ADE80;padding:10px 14px;border-radius:6px;font-size:12px;word-break:break-all;user-select:all">${esc(d.token)}</code>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn p" style="flex:1" onclick="navigator.clipboard.writeText('${esc(d.token)}').then(()=>toast('คัดลอกแล้ว ✓'))">📋 คัดลอก Token</button>
+      <button class="btn" onclick="closeModal()">ปิด</button>
+    </div>`, true);
   $('#tok-name').value='';
   RENDER.tiktok();
 }
