@@ -670,6 +670,7 @@ label {
       <div class="nav-item" data-page="products"><span class="ic">🏷️</span><span class="t">สินค้า (Items)</span></div>
       <div class="nav-item" data-page="inventory"><span class="ic">📦</span><span class="t">การเคลื่อนไหวสต็อก</span></div>
       <div class="nav-item" data-page="salesreport"><span class="ic">📊</span><span class="t">รายงานสต็อกออก</span></div>
+      <div class="nav-item" data-page="lotexpiry"><span class="ic">🏷️</span><span class="t">Lot & วันหมดอายุ</span></div>
       <div class="nav-item" data-page="stockrecon"><span class="ic">🔢</span><span class="t">ตรวจนับสต็อก</span></div>
       <div class="nav-item" data-page="pricelist"><span class="ic">🏷️</span><span class="t">Price List</span></div>
       <div class="nav-item" data-page="wh3d"><span class="ic">🏭</span><span class="t">3D คลังสินค้า</span></div>
@@ -749,6 +750,7 @@ label {
   <div id="page-products" class="page"></div>
   <div id="page-inventory" class="page"></div>
   <div id="page-salesreport" class="page"></div>
+  <div id="page-lotexpiry" class="page"></div>
   <div id="page-stockrecon" class="page"></div>
   <div id="page-wh3d" class="page"></div>
   <div id="page-customers" class="page"></div>
@@ -885,6 +887,7 @@ function load(){
     if(!db.deliveries) db.deliveries=[];
     if(!db.payments) db.payments=[];
     if(!db.workOrders) db.workOrders=[];
+    if(!db.lots) db.lots=[];
     if(!db.priceLists) db.priceLists=[
       {id:'pl-retail',name:'ราคาขายปลีก',description:'ราคาสำหรับลูกค้าทั่วไป',items:[]},
       {id:'pl-wholesale',name:'ราคาขายส่ง',description:'ราคาลูกค้าขายส่ง',items:[]},
@@ -1065,6 +1068,7 @@ const TITLES={
   products:'สินค้า (Item Master)',
   inventory:'การเคลื่อนไหวสต็อก (Stock Ledger)',
   salesreport:'รายงานสต็อกออก (Sales Report)',
+  lotexpiry:'Lot & วันหมดอายุ (Lot & Expiry Tracking)',
   stockrecon:'ตรวจนับสต็อก (Stock Reconciliation)',
   pricelist:'Price List',
   wh3d:'3D คลังสินค้า (Digital Twin)',
@@ -1090,6 +1094,7 @@ const MODULES={
   products:['สต็อก','สินค้า (Item)'],
   inventory:['สต็อก','บัญชีคุมสต็อก'],
   salesreport:['สต็อก','รายงานสต็อกออก'],
+  lotexpiry:['สต็อก','Lot & วันหมดอายุ'],
   stockrecon:['สต็อก','ตรวจนับสต็อก'],
   pricelist:['สต็อก','Price List'],
   wh3d:['สต็อก','3D คลังสินค้า'],
@@ -2704,6 +2709,124 @@ function createMRFromMrp(){
   db.materialReqs.push(mr); save();
   toast('สร้างใบขอซื้อ '+mr.no+' ('+items.length+' รายการ'+(skipped?(', ข้ามซ้ำ '+skipped):'')+') ✓');
   go('materialreq');
+}
+
+/* ===== Lot & วันหมดอายุ (Lot & Expiry) ===== */
+let _lotQ='', _lotFilter='all', _lotDraft=null;
+const LOT_NEAR_DAYS=30;
+function lotDaysLeft(lot){
+  if(!lot.expiryDate) return null;
+  return Math.floor((new Date(lot.expiryDate)-new Date(todayISO()))/86400000);
+}
+function lotStatus(lot){
+  const d=lotDaysLeft(lot);
+  if((lot.qtyRemaining||0)<=0) return {k:'depleted',t:'หมดแล้ว',c:'#9CA3AF'};
+  if(d===null) return {k:'active',t:'ปกติ',c:'#16A34A'};
+  if(d<0) return {k:'expired',t:'หมดอายุ',c:'#DC2626'};
+  if(d<=LOT_NEAR_DAYS) return {k:'near',t:'ใกล้หมด '+d+'ว.',c:'#EA580C'};
+  return {k:'active',t:'ปกติ',c:'#16A34A'};
+}
+RENDER.lotexpiry=function(){
+  $('#page-lotexpiry').innerHTML=`
+  <div class="toolbar" style="flex-wrap:wrap;gap:8px">
+    <input type="search" id="lot-q" placeholder="🔍 ค้นหา SKU / เลข lot / ผู้ขาย" value="${esc(_lotQ)}" style="flex:1;min-width:200px;border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:13px;font-family:inherit">
+    <div class="spacer"></div>
+    <button class="btn p" onclick="newLot()">＋ เพิ่ม Lot</button>
+    <button class="btn" onclick="lotExcel()">📊 Export</button>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+    ${[['all','ทั้งหมด'],['near','🟠 ใกล้หมดอายุ'],['expired','🔴 หมดอายุ'],['active','🟢 ปกติ']].map(([k,l])=>`<button class="btn${_lotFilter===k?' p':''}" onclick="_lotFilter='${k}';RENDER.lotexpiry()">${l}</button>`).join('')}
+  </div>
+  <div id="lot-result"></div>`;
+  $('#lot-q').addEventListener('input',e=>{ _lotQ=e.target.value; drawLots(); });
+  drawLots();
+};
+function drawLots(){
+  const el=$('#lot-result'); if(!el) return;
+  const q=_lotQ.toLowerCase().trim();
+  let lots=(db.lots||[]).filter(l=>{
+    if(q && !((l.sku||'').toLowerCase().includes(q)||(l.lotNo||'').toLowerCase().includes(q)||(l.supplier||'').toLowerCase().includes(q))) return false;
+    const st=lotStatus(l);
+    if(_lotFilter==='near') return st.k==='near';
+    if(_lotFilter==='expired') return st.k==='expired';
+    if(_lotFilter==='active') return st.k==='active';
+    return true;
+  });
+  // FEFO: หมดอายุก่อนขึ้นก่อน
+  lots.sort((a,b)=>{ const da=a.expiryDate||'9999',db_=b.expiryDate||'9999'; return da.localeCompare(db_); });
+  const all=db.lots||[];
+  const nearN=all.filter(l=>lotStatus(l).k==='near').length;
+  const expN=all.filter(l=>lotStatus(l).k==='expired').length;
+  const byP={}; db.products.forEach(p=>byP[p.sku]=p.name);
+  const rows=lots.slice(0,500).map(l=>{ const st=lotStatus(l); const d=lotDaysLeft(l);
+    return `<tr>
+      <td><b>${esc(l.lotNo)}</b></td>
+      <td>${esc(l.sku)}</td><td class="small">${esc(byP[l.sku]||l.sku)}</td>
+      <td>${l.type==='FG'?'<span class="bdg b-info">ผลิต</span>':'<span class="bdg b-gray">รับเข้า</span>'}</td>
+      <td class="num">${fmt(l.qtyRemaining||0)}/${fmt(l.qtyReceived||0)}</td>
+      <td class="small">${l.mfgDate?thDateShort(l.mfgDate):'—'}</td>
+      <td class="small">${l.expiryDate?thDateShort(l.expiryDate):'—'}</td>
+      <td><span class="bdg" style="background:${st.c}1a;color:${st.c};font-weight:700">${st.t}</span></td>
+      <td class="small">${esc(l.supplier||l.woNo||'—')}</td>
+      <td><button class="btn sm" onclick="editLot('${l.id}')">แก้</button></td>
+    </tr>`;}).join('')||'<tr><td colspan="10" class="muted" style="text-align:center">— ยังไม่มี Lot —</td></tr>';
+  el.innerHTML=`
+  <div class="grid g4 mb">
+    <div class="card kpi"><div class="lbl">Lot ทั้งหมด</div><div class="val">${fmt(all.length)}</div><div class="sub">รายการ</div></div>
+    <div class="card kpi"><div class="lbl">🟠 ใกล้หมดอายุ</div><div class="val" style="color:#EA580C">${fmt(nearN)}</div><div class="sub">ภายใน ${LOT_NEAR_DAYS} วัน</div></div>
+    <div class="card kpi"><div class="lbl">🔴 หมดอายุแล้ว</div><div class="val" style="color:#DC2626">${fmt(expN)}</div><div class="sub">ต้องจัดการ</div></div>
+    <div class="card kpi"><div class="lbl">แสดง</div><div class="val">${fmt(lots.length)}</div><div class="sub">ตามตัวกรอง</div></div>
+  </div>
+  <div class="card"><div class="tbl-wrap"><table>
+    <thead><tr><th>เลข Lot</th><th>SKU</th><th>ชื่อสินค้า</th><th>ประเภท</th><th class="num">คงเหลือ/รับ</th><th>วันผลิต</th><th>วันหมดอายุ</th><th>สถานะ</th><th>ที่มา</th><th></th></tr></thead>
+    <tbody>${rows}</tbody></table></div></div>`;
+}
+function newLot(){
+  _lotDraft={id:uid(),lotNo:'',sku:'',class:'',type:'RM',qtyReceived:0,qtyRemaining:0,mfgDate:todayISO(),expiryDate:'',supplier:'',woNo:'',parentLots:[]};
+  lotModal();
+}
+function editLot(id){ _lotDraft=JSON.parse(JSON.stringify(db.lots.find(x=>x.id===id))); lotModal(); }
+function lotModal(){
+  const l=_lotDraft;
+  openModal(`<h2>${l.lotNo?'แก้ไข':'เพิ่ม'} Lot</h2>
+    <div class="row">
+      <div class="field"><label>เลข Lot *</label><input id="lot-no" value="${esc(l.lotNo)}" placeholder="เช่น L690623-001 หรือเลขซัพพลายเออร์"></div>
+      <div class="field"><label>SKU *</label><input id="lot-sku" value="${esc(l.sku)}" placeholder="สแกน/พิมพ์ SKU"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>ประเภท</label><select id="lot-type"><option value="RM"${l.type==='RM'?' selected':''}>รับเข้า (วัตถุดิบ)</option><option value="FG"${l.type==='FG'?' selected':''}>ผลิต (สินค้าสำเร็จรูป)</option></select></div>
+      <div class="field"><label>จำนวนรับเข้า</label><input id="lot-qty" type="number" value="${l.qtyReceived||0}" min="0"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>วันผลิต (MFG)</label><input type="date" id="lot-mfg" value="${l.mfgDate||''}"></div>
+      <div class="field"><label>วันหมดอายุ (EXP) *</label><input type="date" id="lot-exp" value="${l.expiryDate||''}"></div>
+    </div>
+    <div class="field"><label>ผู้ขาย / WO ที่มา</label><input id="lot-sup" value="${esc(l.supplier||l.woNo||'')}" placeholder="ชื่อผู้ขาย หรือเลข WO"></div>
+    <div class="modal-foot"><button class="btn" onclick="closeModal()">ปิด</button><button class="btn p" onclick="saveLot()">บันทึก Lot</button></div>`, true);
+}
+function saveLot(){
+  const l=_lotDraft;
+  l.lotNo=$('#lot-no').value.trim(); l.sku=$('#lot-sku').value.trim();
+  l.type=$('#lot-type').value;
+  const newQty=+$('#lot-qty').value||0;
+  l.mfgDate=$('#lot-mfg').value; l.expiryDate=$('#lot-exp').value;
+  l.supplier=$('#lot-sup').value.trim();
+  const p=db.products.find(x=>x.sku===l.sku); l.class=p?(p.group||''):'';
+  if(!l.lotNo||!l.sku) return toast('กรอกเลข Lot และ SKU');
+  if(!l.expiryDate) return toast('กรอกวันหมดอายุ');
+  // ถ้าเพิ่มใหม่ qtyRemaining = qtyReceived; ถ้าแก้ ปรับ remaining ตามส่วนต่าง
+  const ix=db.lots.findIndex(x=>x.id===l.id);
+  if(ix<0){ l.qtyReceived=newQty; l.qtyRemaining=newQty; db.lots.push(l); }
+  else { const diff=newQty-(db.lots[ix].qtyReceived||0); l.qtyReceived=newQty; l.qtyRemaining=Math.max(0,(db.lots[ix].qtyRemaining||0)+diff); db.lots[ix]=l; }
+  save(); closeModal(); RENDER.lotexpiry(); toast('บันทึก Lot แล้ว ✓');
+}
+function lotExcel(){
+  const lots=db.lots||[]; if(!lots.length) return toast('ไม่มีข้อมูล');
+  const byP={}; db.products.forEach(p=>byP[p.sku]=p.name);
+  const data=[['เลขLot','SKU','ชื่อสินค้า','ประเภท','รับเข้า','คงเหลือ','วันผลิต','วันหมดอายุ','สถานะ','ที่มา']];
+  lots.forEach(l=>data.push([l.lotNo,l.sku,byP[l.sku]||'',l.type,l.qtyReceived||0,l.qtyRemaining||0,l.mfgDate||'',l.expiryDate||'',lotStatus(l).t,l.supplier||l.woNo||'']));
+  const ws=XLSX.utils.aoa_to_sheet(data),wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Lots'); XLSX.writeFile(wb,'Lots_'+todayISO()+'.xlsx');
 }
 
 /* ===== รายงานสต็อกออก ===== */
