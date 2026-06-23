@@ -1498,6 +1498,7 @@ function drawMvDraft(){
       <th class="num">สต็อกปัจจุบัน</th>
       <th class="num" style="min-width:90px">จำนวน</th>
       ${!isOut?'<th style="min-width:120px">Lot No.</th>':''}
+      ${isIn?'<th style="min-width:130px">วันหมดอายุ</th>':''}
       ${isIn||isPut?'<th style="min-width:120px">📍 Slot (To)</th>':''}
       ${isOut?'<th style="min-width:120px">📍 Slot (From)</th>':''}
       <th style="width:36px"></th>
@@ -1513,6 +1514,9 @@ function drawMvDraft(){
       ${!isOut?`<td><input value="${esc(l.lot)}" placeholder="อัตโนมัติ"
         style="font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;width:100%"
         oninput="mvDraft.lines[${ix}].lot=this.value"></td>`:''}
+      ${isIn?`<td><input type="date" value="${esc(l.exp||'')}"
+        style="font-size:11px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;width:100%"
+        oninput="mvDraft.lines[${ix}].exp=this.value"></td>`:''}
       ${isIn||isPut?`<td><input value="${esc(l.to_loc)}" placeholder="A1-R2-03"
         style="font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;width:100%"
         oninput="mvDraft.lines[${ix}].to_loc=this.value"></td>`:''}
@@ -1568,6 +1572,12 @@ function mvCommitAll(type){
     }
     const lot=l.lot||(type==='receive'||type==='in'?lotNo():'');
     db.moves.push({id:uid(),date:now,type,sku:p.sku,gtin:p.gtin||'',qty:l.qty,channel:ch,actor,lot,from_loc:l.from_loc||(isPut?'W':''),to_loc:l.to_loc||'',doc_ref:docRef,note});
+    // Phase 2: สร้าง/รวม RM lot เมื่อรับเข้า (อย./trace)
+    if(type==='receive'||type==='in'){
+      const ex=db.lots.find(L=>L.lotNo===lot&&L.sku===p.sku);
+      if(ex){ ex.qtyReceived=(ex.qtyReceived||0)+l.qty; ex.qtyRemaining=(ex.qtyRemaining||0)+l.qty; if(l.exp) ex.expiryDate=l.exp; }
+      else db.lots.push({id:uid(),lotNo:lot,sku:p.sku,class:p.group||'',type:'RM',qtyReceived:l.qty,qtyRemaining:l.qty,mfgDate:'',expiryDate:l.exp||'',supplier:actor||docRef||'',woNo:'',parentLots:[]});
+    }
     committed++;
   }
 
