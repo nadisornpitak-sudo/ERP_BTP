@@ -155,6 +155,12 @@ body {
   letter-spacing: 0.7px;
 }
 
+.nav-group .nav-sub { overflow: hidden; transition: max-height 0.22s ease; max-height: 600px; }
+.nav-group.collapsed .nav-sub { max-height: 0; }
+.nav-sec { cursor: pointer; display: flex; align-items: center; justify-content: space-between; user-select: none; }
+.nav-arrow { font-size: 9px; margin-right: 14px; transition: transform 0.2s; color: var(--muted); }
+.nav-group.collapsed .nav-arrow { transform: rotate(-90deg); }
+
 /* ────── MAIN ────── */
 .main {
   margin-left: 240px;
@@ -651,35 +657,63 @@ label {
       <p>Thai Perfume</p>
     </div>
   </div>
-  <div class="nav-sec">ภาพรวม</div>
-  <div class="nav-item active" data-page="dash"><span class="ic">📊</span><span class="t">แดชบอร์ด</span></div>
-  <div class="nav-item" data-page="agent"><span class="ic">🤖</span><span class="t">ผู้ช่วย Agent</span></div>
-  <div class="nav-sec">สต็อก (Stock)</div>
-  <div class="nav-item" data-page="products"><span class="ic">🏷️</span><span class="t">สินค้า (Items)</span></div>
-  <div class="nav-item" data-page="inventory"><span class="ic">📦</span><span class="t">การเคลื่อนไหวสต็อก</span></div>
-  <div class="nav-item" data-page="salesreport"><span class="ic">📊</span><span class="t">รายงานสต็อกออก</span></div>
-  <div class="nav-item" data-page="stockrecon"><span class="ic">🔢</span><span class="t">ตรวจนับสต็อก</span></div>
-  <div class="nav-item" data-page="pricelist"><span class="ic">🏷️</span><span class="t">Price List</span></div>
-  <div class="nav-item" data-page="wh3d"><span class="ic">🏭</span><span class="t">3D คลังสินค้า</span></div>
-  <div class="nav-sec">การขาย (Selling)</div>
-  <div class="nav-item" data-page="customers"><span class="ic">👥</span><span class="t">ลูกค้า (Customer)</span></div>
-  <div class="nav-item" data-page="quotation"><span class="ic">📄</span><span class="t">ใบเสนอราคา</span></div>
-  <div class="nav-item" data-page="sales"><span class="ic">🛒</span><span class="t">ใบขาย (Sales Order)</span></div>
-  <div class="nav-item" data-page="delivery"><span class="ic">🚛</span><span class="t">ใบส่งของ (DN)</span></div>
-  <div class="nav-item" data-page="payment"><span class="ic">💳</span><span class="t">รับชำระเงิน</span></div>
-  <div class="nav-item" data-page="shopee"><span class="ic">🛍️</span><span class="t">นำเข้าช่องทาง (Excel)</span></div>
-  <div class="nav-item" data-page="tiktok"><span class="ic">🔌</span><span class="t">เชื่อมต่อ E-commerce</span></div>
-  <div class="nav-sec">การจัดซื้อ (Buying)</div>
-  <div class="nav-item" data-page="mrp"><span class="ic">🏭</span><span class="t">วางแผนวัตถุดิบ (MRP)</span></div>
-  <div class="nav-item" data-page="materialreq"><span class="ic">📋</span><span class="t">ใบขอซื้อ (MR)</span></div>
-  <div class="nav-item" data-page="purchase"><span class="ic">🚚</span><span class="t">ใบสั่งซื้อ (PO)</span></div>
-  <div class="nav-sec">การผลิต (MFG)</div>
-  <div class="nav-item" data-page="workorder"><span class="ic">⚙️</span><span class="t">ใบสั่งผลิต (WO)</span></div>
-  <div class="nav-sec">การเงิน (Accounts)</div>
-  <div class="nav-item" data-page="acct"><span class="ic">🧾</span><span class="t">บัญชี & ภาษี</span></div>
-  <div class="nav-sec">ระบบ</div>
-  <div class="nav-item" data-page="settings"><span class="ic">⚙️</span><span class="t">ตั้งค่า</span></div>
-  <div class="nav-item" data-page="users" id="nav-users" style="display:none"><span class="ic">👤</span><span class="t">ผู้ใช้งาน</span></div>
+  <div class="nav-group" data-group="overview">
+    <div class="nav-sec"><span class="t">ภาพรวม</span><span class="nav-arrow">▼</span></div>
+    <div class="nav-sub">
+      <div class="nav-item active" data-page="dash"><span class="ic">📊</span><span class="t">แดชบอร์ด</span></div>
+      <div class="nav-item" data-page="agent"><span class="ic">🤖</span><span class="t">ผู้ช่วย Agent</span></div>
+    </div>
+  </div>
+  <div class="nav-group collapsed" data-group="stock">
+    <div class="nav-sec"><span class="t">สต็อก (Stock)</span><span class="nav-arrow">▼</span></div>
+    <div class="nav-sub">
+      <div class="nav-item" data-page="products"><span class="ic">🏷️</span><span class="t">สินค้า (Items)</span></div>
+      <div class="nav-item" data-page="inventory"><span class="ic">📦</span><span class="t">การเคลื่อนไหวสต็อก</span></div>
+      <div class="nav-item" data-page="salesreport"><span class="ic">📊</span><span class="t">รายงานสต็อกออก</span></div>
+      <div class="nav-item" data-page="stockrecon"><span class="ic">🔢</span><span class="t">ตรวจนับสต็อก</span></div>
+      <div class="nav-item" data-page="pricelist"><span class="ic">🏷️</span><span class="t">Price List</span></div>
+      <div class="nav-item" data-page="wh3d"><span class="ic">🏭</span><span class="t">3D คลังสินค้า</span></div>
+    </div>
+  </div>
+  <div class="nav-group collapsed" data-group="selling">
+    <div class="nav-sec"><span class="t">การขาย (Selling)</span><span class="nav-arrow">▼</span></div>
+    <div class="nav-sub">
+      <div class="nav-item" data-page="customers"><span class="ic">👥</span><span class="t">ลูกค้า (Customer)</span></div>
+      <div class="nav-item" data-page="quotation"><span class="ic">📄</span><span class="t">ใบเสนอราคา</span></div>
+      <div class="nav-item" data-page="sales"><span class="ic">🛒</span><span class="t">ใบขาย (Sales Order)</span></div>
+      <div class="nav-item" data-page="delivery"><span class="ic">🚛</span><span class="t">ใบส่งของ (DN)</span></div>
+      <div class="nav-item" data-page="payment"><span class="ic">💳</span><span class="t">รับชำระเงิน</span></div>
+      <div class="nav-item" data-page="shopee"><span class="ic">🛍️</span><span class="t">นำเข้าช่องทาง (Excel)</span></div>
+      <div class="nav-item" data-page="tiktok"><span class="ic">🔌</span><span class="t">เชื่อมต่อ E-commerce</span></div>
+    </div>
+  </div>
+  <div class="nav-group collapsed" data-group="buying">
+    <div class="nav-sec"><span class="t">การจัดซื้อ (Buying)</span><span class="nav-arrow">▼</span></div>
+    <div class="nav-sub">
+      <div class="nav-item" data-page="mrp"><span class="ic">🏭</span><span class="t">วางแผนวัตถุดิบ (MRP)</span></div>
+      <div class="nav-item" data-page="materialreq"><span class="ic">📋</span><span class="t">ใบขอซื้อ (MR)</span></div>
+      <div class="nav-item" data-page="purchase"><span class="ic">🚚</span><span class="t">ใบสั่งซื้อ (PO)</span></div>
+    </div>
+  </div>
+  <div class="nav-group collapsed" data-group="mfg">
+    <div class="nav-sec"><span class="t">การผลิต (MFG)</span><span class="nav-arrow">▼</span></div>
+    <div class="nav-sub">
+      <div class="nav-item" data-page="workorder"><span class="ic">⚙️</span><span class="t">ใบสั่งผลิต (WO)</span></div>
+    </div>
+  </div>
+  <div class="nav-group collapsed" data-group="accounts">
+    <div class="nav-sec"><span class="t">การเงิน (Accounts)</span><span class="nav-arrow">▼</span></div>
+    <div class="nav-sub">
+      <div class="nav-item" data-page="acct"><span class="ic">🧾</span><span class="t">บัญชี & ภาษี</span></div>
+    </div>
+  </div>
+  <div class="nav-group collapsed" data-group="system">
+    <div class="nav-sec"><span class="t">ระบบ</span><span class="nav-arrow">▼</span></div>
+    <div class="nav-sub">
+      <div class="nav-item" data-page="settings"><span class="ic">⚙️</span><span class="t">ตั้งค่า</span></div>
+      <div class="nav-item" data-page="users" id="nav-users" style="display:none"><span class="ic">👤</span><span class="t">ผู้ใช้งาน</span></div>
+    </div>
+  </div>
   <div class="nav-divider"></div>
   <div class="nav-footer">
     <div class="nf-brand">Butterfly Thai Perfume</div>
@@ -1075,7 +1109,19 @@ const MODULES={
 };
 const RENDER={};
 $$('.nav-item').forEach(el=>el.addEventListener('click',()=>go(el.dataset.page)));
+
+// Collapsible nav groups
+$$('.nav-sec').forEach(sec=>{
+  sec.addEventListener('click',()=>{
+    const group=sec.closest('.nav-group');
+    if(group) group.classList.toggle('collapsed');
+  });
+});
+
 function go(page){
+  // Auto-expand group containing active page
+  const activeItem=document.querySelector(`.nav-item[data-page="${page}"]`);
+  if(activeItem){ const g=activeItem.closest('.nav-group'); if(g) g.classList.remove('collapsed'); }
   $$('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===page));
   $$('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+page));
   $('#page-title').textContent=TITLES[page];
