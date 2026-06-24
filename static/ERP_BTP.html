@@ -679,6 +679,7 @@ label {
   <div class="nav-group collapsed" data-group="selling">
     <div class="nav-sec"><span class="t">การขาย (Selling)</span><span class="nav-arrow">▼</span></div>
     <div class="nav-sub">
+      <div class="nav-item" data-page="pos"><span class="ic">🏪</span><span class="t">เปิดหน้าร้าน POS ↗</span></div>
       <div class="nav-item" data-page="customers"><span class="ic">👥</span><span class="t">ลูกค้า (Customer)</span></div>
       <div class="nav-item" data-page="quotation"><span class="ic">📄</span><span class="t">ใบเสนอราคา</span></div>
       <div class="nav-item" data-page="sales"><span class="ic">🛒</span><span class="t">ใบขาย (Sales Order)</span></div>
@@ -1124,6 +1125,8 @@ $$('.nav-sec').forEach(sec=>{
 });
 
 function go(page){
+  // POS เป็นแอปแยก — เปิดแท็บใหม่ ไม่ render ในหน้า ERP
+  if(page==='pos'){ window.open('/pos','_blank'); return; }
   // Auto-expand group containing active page
   const activeItem=document.querySelector(`.nav-item[data-page="${page}"]`);
   if(activeItem){ const g=activeItem.closest('.nav-group'); if(g) g.classList.remove('collapsed'); }
