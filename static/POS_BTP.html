@@ -991,6 +991,63 @@ header {
     padding-top: 8px;
   }
 }
+
+/* ════════════════════════════════════════════════════
+   PREMIUM POLISH — ยกระดับ UI ตาม CI แบรนด์ (Butterfly Gold)
+   เพิ่มเติมท้ายสุด ทับของเดิมเฉพาะ property ที่ระบุ ไม่กระทบ layout
+   ════════════════════════════════════════════════════ */
+:root {
+  --shadow-sm: 0 1px 3px rgba(36,34,32,.06);
+  --shadow:    0 4px 16px rgba(36,34,32,.08);
+  --shadow-lg: 0 12px 32px rgba(36,34,32,.12);
+  --gold-grad: linear-gradient(135deg, #C9A646 0%, #B8952B 55%, #9A7C22 100%);
+}
+body { background: linear-gradient(180deg, #F7F5EF 0%, #F2EFE6 100%); }
+
+/* Header — เส้นทองบางใต้แบรนด์ + เงานุ่ม */
+header { box-shadow: var(--shadow-sm); border-bottom-color: var(--gold-border); }
+header::after { content:''; position:absolute; left:0; right:0; top:60px; height:2px; background: var(--gold-grad); opacity:.85; }
+header { position: relative; }
+
+/* Product cards — premium hover + แถบทองด้านบน + ราคาทอง */
+.product-card { border-radius: 14px; box-shadow: var(--shadow-sm); transition: transform .2s cubic-bezier(.4,0,.2,1), box-shadow .2s, border-color .2s; }
+.product-card::before { content:''; position:absolute; left:0; right:0; top:0; height:3px; background: var(--gold-grad); transform: scaleX(0); transform-origin:left; transition: transform .25s ease; }
+.product-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--gold); }
+.product-card:hover::before { transform: scaleX(1); }
+.product-card:active { transform: translateY(-1px); }
+.product-price { color: var(--gold-dark); font-weight: 700; }
+
+/* Checkout — ปุ่มทองไล่เฉด + เรืองแสง + กดยุบ */
+.btn-checkout { background: var(--gold-grad); border-radius: 12px; box-shadow: 0 6px 18px rgba(184,149,43,.32); letter-spacing:.08em; }
+.btn-checkout:hover { background: var(--gold-grad); filter: brightness(1.06); box-shadow: 0 10px 26px rgba(184,149,43,.42); transform: translateY(-1px); }
+.btn-checkout:active { transform: translateY(1px); box-shadow: 0 3px 10px rgba(184,149,43,.3); }
+
+/* Payment tabs — active สีทองเต็ม นุ่มขึ้น */
+.payment-tab { border-radius: 10px; transition: var(--transition); }
+.payment-tab.active { background: var(--gold-grad) !important; color:#fff !important; box-shadow: 0 4px 12px rgba(184,149,43,.3); }
+
+/* Member panel — กระดาษพรีเมียม + แถบทองซ้าย */
+.member-panel { border-radius: 14px; box-shadow: var(--shadow-sm); border-left: 3px solid var(--gold); background: linear-gradient(180deg,#FFFFFF 0%, #FDFBF6 100%); }
+.member-search input { border-radius: 10px; }
+.member-search input:focus { box-shadow: 0 0 0 3px var(--gold-muted); }
+.member-avatar { box-shadow: 0 3px 10px rgba(184,149,43,.35); background: var(--gold-grad); }
+.tier-badge { letter-spacing:.03em; }
+
+/* Cart — มุมมน เงานุ่ม + hover ทอง */
+.cart-item { border-radius: 12px; transition: var(--transition); }
+.cart-item:hover { box-shadow: var(--shadow-sm); }
+.cart-item-total { color: var(--gold-dark); font-weight: 700; }
+
+/* Inputs ทั่วไป — focus ring ทอง */
+input:focus, select:focus, textarea:focus { outline: none; }
+.customer-section select:focus, .member-search input:focus { box-shadow: 0 0 0 3px var(--gold-muted); }
+
+/* ปุ่มเพิ่ม/ค้นหา — วงกลมพรีเมียม */
+.btn-add-cust { border-radius: 10px; transition: var(--transition); }
+.btn-add-cust:hover { background: var(--gold-muted); border-color: var(--gold); transform: translateY(-1px); }
+
+/* การ์ด/แผงทั่วไป — เงานุ่มขึ้น */
+.cart-checkout-panel, .product-panel { box-shadow: var(--shadow-sm); }
 </style>
 </head>
 <body>
