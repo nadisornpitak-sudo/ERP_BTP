@@ -1298,6 +1298,11 @@ async def stock_export(user_id: str = Depends(verify_token)):
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# หน้าขายหน้าร้าน (POS) — แอปแยกจาก ERP แต่ใช้ข้อมูลเดียวกัน
+@app.get("/pos")
+async def serve_pos():
+    return FileResponse("static/POS_BTP.html")
+
 @app.get("/{full_path:path}")
 async def serve_app(full_path: str):
     return FileResponse("static/ERP_BTP.html")
