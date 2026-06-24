@@ -2573,7 +2573,10 @@ window.openWOIssue = function(woId){
         return `<tr><td><b>${esc(sku)}</b></td><td class="small">${esc(p ? p.name : sku)}</td>
         <td class="num">${fmt(rem)}</td><td class="num small"${w <= 0 ? ' style="color:var(--bad)"' : ''}>${fmt(w)}</td>
         <td class="num"><input type="number" id="wo-iss-mat-${sku}" value="0" min="0" max="${w}" style="width:90px;text-align:right"></td></tr>`; }).join('')}</tbody></table></div>
-    <div class="field"><label>หมายเหตุ</label><input id="wo-iss-note" placeholder="เช่น กะเช้า / ล็อตที่ ..."></div>
+    <div class="row">
+      <div class="field" style="max-width:220px"><label>วันหมดอายุสินค้าที่ผลิต (FG)</label><input type="date" id="wo-iss-fgexp"></div>
+      <div class="field"><label>หมายเหตุ</label><input id="wo-iss-note" placeholder="เช่น กะเช้า / ล็อตที่ ..."></div>
+    </div>
     <div class="modal-foot" style="justify-content:flex-end;gap:8px">
       <button class="btn" onclick="closeModal()">ยกเลิก</button>
       <button class="btn p" onclick="saveWOIssue('${woId}')">💾 บันทึกเบิก/ผลิต</button></div>`, true);
@@ -2603,12 +2606,17 @@ window.saveWOIssue = function(woId){
   const short = materials.map(m => { const p = db.products.find(x => x.sku === m.sku); return { sku: m.sku, have: p ? (p.stock.W || 0) : 0, want: m.qty }; }).filter(s => s.want > s.have);
   if (short.length) return toast('เบิกไม่ได้ วัตถุดิบไม่พอใน W: ' + short.map(s => s.sku + ' (มี ' + fmt(s.have) + ' ขอ ' + fmt(s.want) + ')').join(', ') + ' — ลดจำนวน หรือรับวัตถุดิบเข้าก่อน');
   const now = new Date().toISOString();
+  const fgExp = (document.getElementById('wo-iss-fgexp') || {}).value || '';
+  const parentLots = [];   // genealogy: RM lot ที่ถูกใช้ผลิต batch นี้
   materials.forEach(m => { const p = db.products.find(x => x.sku === m.sku); if (!p) return;
     p.stock.W = (p.stock.W || 0) - m.qty;
+    consumeLotsFEFO(m.sku, m.qty).forEach(u => parentLots.push(u));   // ตัด RM lot FEFO
     db.moves.push({ id: uid(), date: now, type: 'issue', sku: m.sku, qty: m.qty, channel: 'W', actor: recallActor() || 'WO', doc_ref: wo.no, note: 'ทยอยเบิก ' + wo.no + (note ? ' — ' + note : '') }); });
   outputs.forEach(o => { const fp = db.products.find(x => x.sku === o.sku); if (!fp) return;
     fp.stock.O = (fp.stock.O || 0) + o.qty;
-    db.moves.push({ id: uid(), date: now, type: 'in', sku: o.sku, qty: o.qty, channel: 'O', actor: recallActor() || 'WO', doc_ref: wo.no, note: 'ผลิตรายวัน ' + wo.no });
+    const fgLotNo = 'FG-' + wo.no.replace(/[^0-9]/g, '').slice(-5) + '-' + lotNo().slice(-4);
+    db.moves.push({ id: uid(), date: now, type: 'in', sku: o.sku, qty: o.qty, channel: 'O', actor: recallActor() || 'WO', doc_ref: wo.no, lot: fgLotNo, note: 'ผลิตรายวัน ' + wo.no });
+    db.lots.push({ id: uid(), lotNo: fgLotNo, sku: o.sku, class: fp.group || '', type: 'FG', qtyReceived: o.qty, qtyRemaining: o.qty, mfgDate: date, expiryDate: fgExp, supplier: '', woNo: wo.no, parentLots: parentLots.map(x => ({ ...x })) });   // FG lot + genealogy
     const it = items.find(x => x.sku === o.sku); if (it) it.producedQty = (it.producedQty || 0) + o.qty; });
   if (!wo.items) wo.producedQty = (wo.producedQty || 0) + (outputs[0] ? outputs[0].qty : 0);
   else wo.producedQty = items.reduce((s, it) => s + (it.producedQty || 0), 0);
@@ -2735,6 +2743,14 @@ function lotStatus(lot){
   if(d<0) return {k:'expired',t:'หมดอายุ',c:'#DC2626'};
   if(d<=LOT_NEAR_DAYS) return {k:'near',t:'ใกล้หมด '+d+'ว.',c:'#EA580C'};
   return {k:'active',t:'ปกติ',c:'#16A34A'};
+}
+// ตัด RM lot แบบ FEFO (หมดอายุก่อน-ออกก่อน) คืน list lot ที่ใช้ (genealogy)
+function consumeLotsFEFO(sku, qty){
+  const lots=(db.lots||[]).filter(L=>L.sku===sku && (L.qtyRemaining||0)>0)
+    .sort((a,b)=>(a.expiryDate||'9999-12-31').localeCompare(b.expiryDate||'9999-12-31'));
+  let need=qty; const used=[];
+  for(const L of lots){ if(need<=0) break; const take=Math.min(L.qtyRemaining,need); L.qtyRemaining-=take; need-=take; used.push({lotNo:L.lotNo,sku,qty:take}); }
+  return used;
 }
 RENDER.lotexpiry=function(){
   $('#page-lotexpiry').innerHTML=`
