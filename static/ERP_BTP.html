@@ -2794,7 +2794,7 @@ function drawLots(){
       <td class="small">${l.expiryDate?thDateShort(l.expiryDate):'—'}</td>
       <td><span class="bdg" style="background:${st.c}1a;color:${st.c};font-weight:700">${st.t}</span></td>
       <td class="small">${esc(l.supplier||l.woNo||'—')}</td>
-      <td><button class="btn sm" onclick="editLot('${l.id}')">แก้</button></td>
+      <td style="white-space:nowrap"><button class="btn sm" onclick="traceLot('${l.id}')" title="ตรวจสอบย้อนกลับ">🔍</button> <button class="btn sm" onclick="editLot('${l.id}')">แก้</button></td>
     </tr>`;}).join('')||'<tr><td colspan="10" class="muted" style="text-align:center">— ยังไม่มี Lot —</td></tr>';
   el.innerHTML=`
   <div class="grid g4 mb">
@@ -2853,6 +2853,41 @@ function lotExcel(){
   lots.forEach(l=>data.push([l.lotNo,l.sku,byP[l.sku]||'',l.type,l.qtyReceived||0,l.qtyRemaining||0,l.mfgDate||'',l.expiryDate||'',lotStatus(l).t,l.supplier||l.woNo||'']));
   const ws=XLSX.utils.aoa_to_sheet(data),wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,'Lots'); XLSX.writeFile(wb,'Lots_'+todayISO()+'.xlsx');
+}
+// ตรวจสอบย้อนกลับ (Trace) — สำหรับเรียกคืนสินค้า ตาม อย./GMP
+function traceLot(id){
+  const lot=db.lots.find(x=>x.id===id); if(!lot) return;
+  const byP={}; db.products.forEach(p=>byP[p.sku]=p.name);
+  const st=lotStatus(lot);
+  let body='';
+  if(lot.type==='FG'){
+    // ย้อนกลับ: FG นี้ผลิตจากวัตถุดิบ lot ไหนบ้าง (genealogy)
+    const pls=lot.parentLots||[];
+    body=`<div class="card" style="margin-bottom:10px"><b>⬅️ ผลิตจากวัตถุดิบ (Backward trace)</b>
+      <div class="tbl-wrap" style="margin-top:6px"><table><thead><tr><th>RM Lot</th><th>SKU</th><th>ชื่อ</th><th class="num">ใช้ไป</th><th>หมดอายุ</th></tr></thead>
+      <tbody>${pls.map(pl=>{const rl=db.lots.find(L=>L.lotNo===pl.lotNo&&L.sku===pl.sku);
+        return `<tr><td><b>${esc(pl.lotNo)}</b></td><td>${esc(pl.sku)}</td><td class="small">${esc(byP[pl.sku]||pl.sku)}</td><td class="num">${fmt(pl.qty)}</td><td class="small">${rl&&rl.expiryDate?thDateShort(rl.expiryDate):'—'}</td></tr>`;}).join('')||'<tr><td colspan="5" class="muted">— ไม่มีข้อมูล genealogy —</td></tr>'}</tbody></table></div></div>`;
+  } else {
+    // ไปข้างหน้า: RM lot นี้ถูกใช้ผลิต FG lot ไหนบ้าง (recall)
+    const usedIn=db.lots.filter(L=>L.type==='FG'&&(L.parentLots||[]).some(pl=>pl.lotNo===lot.lotNo&&pl.sku===lot.sku));
+    body=`<div class="card" style="margin-bottom:10px;border-left:3px solid #DC2626"><b>➡️ ถูกใช้ผลิตสินค้า (Forward trace — เรียกคืน)</b>
+      <p class="small muted" style="margin:4px 0">ถ้าวัตถุดิบ lot นี้มีปัญหา ต้องเรียกคืน FG เหล่านี้:</p>
+      <div class="tbl-wrap"><table><thead><tr><th>FG Lot</th><th>SKU</th><th>ชื่อ</th><th class="num">ผลิต</th><th class="num">เหลือในคลัง</th><th>WO</th><th>หมดอายุ</th></tr></thead>
+      <tbody>${usedIn.map(f=>`<tr><td><b>${esc(f.lotNo)}</b></td><td>${esc(f.sku)}</td><td class="small">${esc(byP[f.sku]||f.sku)}</td><td class="num">${fmt(f.qtyReceived||0)}</td><td class="num"${(f.qtyRemaining||0)>0?' style="color:var(--warn);font-weight:700"':''}>${fmt(f.qtyRemaining||0)}</td><td class="small">${esc(f.woNo||'-')}</td><td class="small">${f.expiryDate?thDateShort(f.expiryDate):'—'}</td></tr>`).join('')||'<tr><td colspan="7" class="muted">— ยังไม่ถูกใช้ผลิต —</td></tr>'}</tbody></table></div></div>`;
+  }
+  // moves ที่อ้างถึง lot นี้ (ไปไหนบ้าง)
+  const mvs=(db.moves||[]).filter(m=>m.lot===lot.lotNo);
+  const mvHtml=mvs.length?`<div class="card"><b>📒 ความเคลื่อนไหวของ lot นี้</b><div class="tbl-wrap" style="margin-top:6px"><table><thead><tr><th>วันที่</th><th>ประเภท</th><th class="num">จำนวน</th><th>เอกสาร</th></tr></thead>
+    <tbody>${mvs.map(m=>`<tr><td class="small">${thDateShort((m.date||'').slice(0,10))}</td><td>${esc(m.type)}</td><td class="num">${fmt(m.qty)}</td><td class="small">${esc(m.doc_ref||'-')}</td></tr>`).join('')}</tbody></table></div></div>`:'';
+  openModal(`<h2>🔍 ตรวจสอบย้อนกลับ: ${esc(lot.lotNo)}</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;font-size:12.5px">
+      <div><b>SKU:</b> ${esc(lot.sku)} (${esc(byP[lot.sku]||'')})</div>
+      <div><b>ประเภท:</b> ${lot.type==='FG'?'สินค้าสำเร็จรูป (ผลิต)':'วัตถุดิบ (รับเข้า)'}</div>
+      <div><b>คงเหลือ/รับ:</b> ${fmt(lot.qtyRemaining||0)}/${fmt(lot.qtyReceived||0)}</div>
+      <div><b>วันหมดอายุ:</b> ${lot.expiryDate?thDateShort(lot.expiryDate):'—'} <span class="bdg" style="background:${st.c}1a;color:${st.c}">${st.t}</span></div>
+    </div>
+    ${body}${mvHtml}
+    <div class="modal-foot"><button class="btn p" onclick="closeModal()">ปิด</button></div>`, true);
 }
 
 /* ===== รายงานสต็อกออก ===== */
