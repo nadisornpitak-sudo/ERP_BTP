@@ -1048,6 +1048,47 @@ input:focus, select:focus, textarea:focus { outline: none; }
 
 /* การ์ด/แผงทั่วไป — เงานุ่มขึ้น */
 .cart-checkout-panel, .product-panel { box-shadow: var(--shadow-sm); }
+
+/* ════════════════════════════════════════════════════
+   RESPONSIVE — รองรับแท็บเล็ต/มือถือ (POS)
+   ════════════════════════════════════════════════════ */
+@media (max-width: 860px) {
+  body { overflow: auto; height: auto; -webkit-text-size-adjust: 100%; }
+  .pos-container { height: auto; min-height: 100vh; }
+  /* แยกซ้าย-ขวา → เรียงบน-ล่าง */
+  .pos-workspace { flex-direction: column; overflow: visible; flex: none; }
+  .pos-catalog { width: 100%; border-right: none; border-bottom: 1px solid var(--border); overflow: visible; }
+  .catalog-scroll { overflow: visible; padding: 12px 14px; }
+  .pos-cart { width: 100%; overflow: visible; }
+  .cart-items { max-height: 42vh; overflow-y: auto; padding: 10px 14px; }
+  .product-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+  .cart-empty { margin-top: 30px; }
+  /* header ยืดหยุ่น */
+  header { height: auto; min-height: 56px; flex-wrap: wrap; gap: 8px; padding: 10px 14px; }
+  header::after { top: auto; bottom: 0; }
+  .header-actions { gap: 8px; flex-wrap: wrap; }
+  .live-clock { display: none; }
+  .brand-name p { display: none; }
+  .catalog-toolbar { padding: 12px 14px; }
+}
+@media (max-width: 480px) {
+  body { font-size: 13px; }
+  .product-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .product-card { padding: 10px; border-radius: 12px; }
+  header { padding: 8px 10px; }
+  .brand-name h1 { font-size: 15px; }
+  .staff-badge { font-size: 10.5px; padding: 5px 8px; }
+  .btn-back-erp, .btn-logout { font-size: 11px; padding: 6px 9px; }
+  /* ค้นหา + สแกน เรียงลงเพื่อกดง่ายด้วยนิ้ว */
+  .search-row { flex-direction: column; align-items: stretch; }
+  .btn-scanner { justify-content: center; padding: 12px; }
+  .cart-checkout-panel { padding: 12px 14px; }
+  .member-search { flex-wrap: wrap; }
+  .member-search input { min-width: 0; }
+  .cart-items { max-height: 36vh; }
+  .btn-checkout { padding: 15px; font-size: 15px; }  /* tap target ใหญ่ */
+  .calc-row, .payment-tab { font-size: 13px; }
+}
 </style>
 </head>
 <body>
