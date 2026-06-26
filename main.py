@@ -1281,6 +1281,15 @@ async def mrp_plan(user_id: str = Depends(verify_token)):
     db = json.loads(DB_FILE.read_text(encoding="utf-8"))
     return mrp_run(db, Config(), datetime.now())
 
+# ── ผลิตได้สูงสุดกี่ชิ้นต่อ FG จากวัตถุดิบคงเหลือ (อ่านอย่างเดียว) ──
+@app.get("/api/mrp/buildable")
+async def mrp_buildable(user_id: str = Depends(verify_token)):
+    if not DB_FILE.exists():
+        return {"items": [], "fg_with_bom": 0, "producible_now": 0, "blocked": 0}
+    from mrp.engine import buildable_report
+    db = json.loads(DB_FILE.read_text(encoding="utf-8"))
+    return buildable_report(db, datetime.now())
+
 # ── Stock export (for n8n or other tools) ──────────────────
 @app.get("/api/stock/export")
 async def stock_export(user_id: str = Depends(verify_token)):

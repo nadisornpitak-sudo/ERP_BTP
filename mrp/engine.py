@@ -240,6 +240,72 @@ def lot_size_target(rop: float, poh: int) -> float:
     return max(0.0, rop - poh)
 
 
+def buildable_report(db: dict, now: datetime | None = None) -> dict:
+    """ผลิตได้สูงสุดกี่ชิ้นต่อ FG จากวัตถุดิบคงเหลือในคลัง (W) ตอนนี้.
+
+    pure read — ไม่แก้ db. สำหรับแต่ละ FG ที่มี BOM:
+      max_build = min ทุก component ของ (on-hand(W) // qty_ต่อชิ้น)
+    คืน component ที่เป็นคอขวด (binding) + แยกว่าเป็นคลังน้ำ (BU) หรือคลังวัสดุ (PK).
+    """
+    products = db.get("products", [])
+    by_sku = {p.get("sku"): p for p in products if p.get("sku")}
+
+    def onhand(sku: str) -> int:
+        p = by_sku.get(sku)
+        if not p:
+            return 0
+        st = p.get("stock", {}) or {}
+        return sum(int(st.get(c, 0) or 0) for c in ONHAND_CHANNELS)
+
+    def wh_of(sku: str) -> str:
+        s = (sku or "").upper()
+        if s.startswith("BU"):
+            return "คลังน้ำ"
+        if s.startswith("PK"):
+            return "คลังวัสดุ"
+        return "อื่นๆ"
+
+    rows = []
+    for p in products:
+        sku = p.get("sku", "")
+        bom = p.get("bom") or []
+        if not sku.startswith("FG") or not bom:
+            continue
+        limit = None
+        binding = None
+        comps = []
+        for c in bom:
+            csku, q = c.get("sku"), int(c.get("qty", 0) or 0)
+            if not csku or q <= 0:
+                continue
+            oh = onhand(csku)
+            cap = oh // q
+            comps.append({"sku": csku, "warehouse": wh_of(csku),
+                          "per_unit": q, "on_hand": oh, "can_make": cap,
+                          "missing_for_one": max(0, q - oh)})
+            if limit is None or cap < limit:
+                limit, binding = cap, csku
+        if limit is None:
+            continue
+        fg_st = p.get("stock", {}) or {}
+        rows.append({
+            "sku": sku, "name": p.get("name", ""), "group": p.get("group", ""),
+            "max_buildable": int(limit),
+            "binding_component": binding,
+            "binding_warehouse": wh_of(binding),
+            "fg_on_hand": sum(int(fg_st.get(c, 0) or 0) for c in ("S", "D", "O")),
+            "components": comps,
+        })
+    rows.sort(key=lambda r: (r["max_buildable"], r["sku"]))
+    return {
+        "generated_at": (now or datetime.now()).isoformat(),
+        "fg_with_bom": len(rows),
+        "producible_now": sum(1 for r in rows if r["max_buildable"] > 0),
+        "blocked": sum(1 for r in rows if r["max_buildable"] == 0),
+        "items": rows,
+    }
+
+
 def _summary(planned, exceptions):
     from collections import Counter
     return {

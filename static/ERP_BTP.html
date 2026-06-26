@@ -674,6 +674,7 @@ label {
       <div class="nav-item" data-page="stockrecon"><span class="ic">🔢</span><span class="t">ตรวจนับสต็อก</span></div>
       <div class="nav-item" data-page="pricelist"><span class="ic">🏷️</span><span class="t">Price List</span></div>
       <div class="nav-item" data-page="wh3d"><span class="ic">🏭</span><span class="t">3D คลังสินค้า</span></div>
+      <div class="nav-item" data-page="materials"><span class="ic">🧪</span><span class="t">คลังวัตถุดิบ (น้ำ/วัสดุ)</span></div>
     </div>
   </div>
   <div class="nav-group collapsed" data-group="selling">
@@ -754,6 +755,7 @@ label {
   <div id="page-lotexpiry" class="page"></div>
   <div id="page-stockrecon" class="page"></div>
   <div id="page-wh3d" class="page"></div>
+  <div id="page-materials" class="page"></div>
   <div id="page-customers" class="page"></div>
   <div id="page-quotation" class="page"></div>
   <div id="page-sales" class="page"></div>
@@ -1073,6 +1075,7 @@ const TITLES={
   stockrecon:'ตรวจนับสต็อก (Stock Reconciliation)',
   pricelist:'Price List',
   wh3d:'3D คลังสินค้า (Digital Twin)',
+  materials:'คลังวัตถุดิบ — คลังน้ำ (BU) / คลังวัสดุ (PK)',
   customers:'ลูกค้า (Customer Master)',
   quotation:'ใบเสนอราคา (Quotation)',
   sales:'ใบขาย (Sales Order)',
@@ -1099,6 +1102,7 @@ const MODULES={
   stockrecon:['สต็อก','ตรวจนับสต็อก'],
   pricelist:['สต็อก','Price List'],
   wh3d:['สต็อก','3D คลังสินค้า'],
+  materials:['สต็อก','คลังวัตถุดิบ (น้ำ/วัสดุ)'],
   customers:['การขาย','ลูกค้า'],
   quotation:['การขาย','ใบเสนอราคา'],
   sales:['การขาย','ใบขาย'],
@@ -2674,6 +2678,73 @@ function agentRow(f){
   return `<tr><td><span class="bdg" style="background:${s.c}1a;color:${s.c};font-weight:700">${s.e} ${s.t}</span></td>
     <td>${f.sku?('<b>'+esc(f.sku)+'</b>'):'<span class="muted">—</span>'}</td>
     <td class="small">${esc(f.name||'')}</td><td class="small">${esc(f.message||'')}</td></tr>`;
+}
+
+/* ===== คลังวัตถุดิบ — คลังน้ำ (BU) / คลังวัสดุ (PK) + ผลิตได้สูงสุด ===== */
+RENDER.materials=function(){
+  const host=$('#page-materials');
+  const bu=db.products.filter(p=>(p.sku||'').startsWith('BU'));
+  const pk=db.products.filter(p=>(p.sku||'').startsWith('PK'));
+  const wsum=a=>a.reduce((s,p)=>s+(+((p.stock&&p.stock.W)||0)),0);
+  const kpi=(l,v,c,sub)=>`<div class="card kpi"><div class="lbl">${l}</div><div class="val"${c?` style="color:${c}"`:''}>${v}</div><div class="sub">${sub||''}</div></div>`;
+  window._matBU=bu; window._matPK=pk; window._matTab=window._matTab||'bu'; window._matBuild=null;
+  host.innerHTML=`
+   <div class="grid g4 mb">
+     ${kpi('💧 คลังน้ำ (BU)', fmt(wsum(bu)), '#0EA5E9', bu.length+' รายการ • หัวน้ำหอม')}
+     ${kpi('📦 คลังวัสดุ (PK)', fmt(wsum(pk)), '#B8952B', pk.length+' รายการ • บรรจุภัณฑ์')}
+     ${kpi('🏭 FG ผลิตได้ตอนนี้', '…', '#16A34A', 'จากวัตถุดิบคงเหลือ')}
+     ${kpi('⛔ FG ติดคอขวด', '…', '#DC2626', 'วัตถุดิบไม่พอ')}
+   </div>
+   <div class="toolbar">
+     <button class="btn p" id="mt-tab-bu" onclick="matTab('bu')">💧 คลังน้ำ</button>
+     <button class="btn" id="mt-tab-pk" onclick="matTab('pk')">📦 คลังวัสดุ</button>
+     <button class="btn" id="mt-tab-build" onclick="matTab('build')">🏭 ผลิตได้สูงสุด</button>
+     <div class="spacer"></div>
+     <input id="mt-search" placeholder="ค้นหา SKU / ชื่อ…" oninput="matRender()" style="padding:7px 12px;border:1px solid var(--bd,#ddd);border-radius:8px;min-width:220px">
+   </div>
+   <div id="mt-body"></div>`;
+  matTab(window._matTab);
+  if(IS_SERVER){
+    API.get('/api/mrp/buildable').then(r=>r.ok?r.json():null).then(d=>{
+      window._matBuild=d;
+      if(d){ const v=host.querySelectorAll('.kpi .val'); if(v[2])v[2].textContent=fmt(d.producible_now); if(v[3])v[3].textContent=fmt(d.blocked); }
+      if(window._matTab==='build') matRender();
+    }).catch(()=>{});
+  }
+};
+function matTab(t){
+  window._matTab=t;
+  ['bu','pk','build'].forEach(x=>{const b=document.getElementById('mt-tab-'+x); if(b)b.className='btn'+(x===t?' p':'');});
+  matRender();
+}
+function matRender(){
+  const body=document.getElementById('mt-body'); if(!body)return;
+  const se=document.getElementById('mt-search'); const q=(se?se.value:'').toLowerCase().trim();
+  const tab=window._matTab;
+  if(tab==='build'){
+    const d=window._matBuild;
+    if(!d){ body.innerHTML='<div class="card"><p class="muted">⏳ กำลังคำนวณ… (ใช้ได้บนเซิร์ฟเวอร์)</p></div>'; return; }
+    let items=d.items||[];
+    if(q) items=items.filter(it=>(it.sku||'').toLowerCase().includes(q)||(it.name||'').toLowerCase().includes(q));
+    const rows=items.slice(0,500).map(it=>`<tr><td><b>${esc(it.sku)}</b></td><td class="small">${esc((it.name||'').slice(0,40))}</td>
+      <td class="num"><b style="color:${it.max_buildable>0?'#16A34A':'#DC2626'}">${fmt(it.max_buildable)}</b></td>
+      <td class="small"><b>${esc(it.binding_component||'')}</b></td><td class="small">${esc(it.binding_warehouse||'')}</td></tr>`).join('');
+    body.innerHTML=`<div class="card"><h3>🏭 ผลิตได้สูงสุดจากวัตถุดิบคงเหลือ (เรียงน้อย→มาก) — ${items.length} รายการ</h3>
+      <p class="small muted">คอขวด = วัตถุดิบที่จำกัดจำนวนผลิต • แตะค้นหาเพื่อกรอง</p>
+      <div class="tbl-wrap"><table><thead><tr><th>FG SKU</th><th>ชื่อสินค้า</th><th class="num">ผลิตได้ (ชิ้น)</th><th>คอขวด (SKU)</th><th>คลัง</th></tr></thead>
+      <tbody>${rows||'<tr><td colspan=5 class="muted">ไม่พบ</td></tr>'}</tbody></table></div></div>`;
+    return;
+  }
+  let arr=(tab==='bu'?window._matBU:window._matPK)||[];
+  if(q) arr=arr.filter(p=>(p.sku||'').toLowerCase().includes(q)||(p.name||'').toLowerCase().includes(q));
+  arr=arr.slice().sort((a,b)=>(+((b.stock&&b.stock.W)||0))-(+((a.stock&&a.stock.W)||0)));
+  const label=tab==='bu'?'💧 คลังน้ำ — หัวน้ำหอม (BU)':'📦 คลังวัสดุ — บรรจุภัณฑ์ (PK)';
+  const rows=arr.slice(0,800).map(p=>{const w=+((p.stock&&p.stock.W)||0);
+    return `<tr><td><b>${esc(p.sku)}</b></td><td class="small">${esc((p.name||'').slice(0,48))}</td>
+     <td class="num"${w<=0?' style="color:#DC2626"':''}>${fmt(w)}</td></tr>`;}).join('');
+  body.innerHTML=`<div class="card"><h3>${label} — ${arr.length} รายการ</h3>
+    <div class="tbl-wrap"><table><thead><tr><th>SKU</th><th>ชื่อวัตถุดิบ</th><th class="num">คงเหลือ (W)</th></tr></thead>
+    <tbody>${rows||'<tr><td colspan=3 class="muted">ไม่พบ</td></tr>'}</tbody></table></div></div>`;
 }
 
 /* ===== MRP (วางแผนความต้องการวัตถุดิบ) ===== */
