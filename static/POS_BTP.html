@@ -356,11 +356,21 @@ header {
   color: var(--success);
   border: 1px solid rgba(42, 157, 84, 0.25);
 }
+.stock-pill.low {
+  background: rgba(216, 67, 21, 0.12);
+  color: var(--warning, #D84315);
+  border: 1px solid rgba(216, 67, 21, 0.3);
+}
 .stock-pill.out {
   background: rgba(214, 73, 73, 0.12);
   color: var(--error);
   border: 1px solid rgba(214, 73, 73, 0.25);
 }
+@keyframes cartFlash {
+  0%   { background: var(--gold-muted, rgba(184,149,43,.1)); }
+  100% { background: var(--bg-input); }
+}
+.cart-item.flash { animation: cartFlash 0.6s ease-out; }
 
 /* Right Section: Shopping Cart & Checkout */
 .pos-cart {
@@ -1304,7 +1314,7 @@ input:focus, select:focus, textarea:focus { outline: none; }
         
         <!-- Submit checkout button -->
         <button class="btn-checkout" onclick="submitCheckout()">
-          🛒 ยืนยันชำระเงิน & พิมพ์ใบเสร็จ
+          🛒 ยืนยันชำระเงิน & พิมพ์ใบเสร็จ <span style="opacity:0.7;font-weight:600;font-size:0.85em;">(F9)</span>
         </button>
       </div>
     </div>
@@ -1424,6 +1434,8 @@ let db = null;
 let cart = [];
 let currentCategory = 'ALL';
 let currentPaymentMethod = 'cash'; // cash, qr, card
+const LOW_STOCK_THRESHOLD = 5;     // เตือนสีส้มเมื่อสต็อกหน้าร้านเหลือ ≤ ค่านี้
+let lastTouchedSku = null;         // flash highlight แถวที่เพิ่งเพิ่ม
 
 /* ============ DATE UTILS ============ */
 const THAI_MONTHS = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
@@ -1462,7 +1474,21 @@ window.onload = async function() {
     const d = new Date();
     document.getElementById('live-clock').textContent = `${thDateLong(d)} ${formatTime(d)}`;
   }, 1000);
-  
+
+  // คีย์ลัด: F2 = ไปช่องค้นหา/สแกน, F9 = ยืนยันชำระเงิน
+  document.addEventListener('keydown', (e) => {
+    const root = document.getElementById('app-root');
+    if (root && root.style.display === 'none') return;
+    if (e.key === 'F2') {
+      e.preventDefault();
+      const s = document.getElementById('catalog-search');
+      if (s) { s.focus(); s.select(); }
+    } else if (e.key === 'F9') {
+      e.preventDefault();
+      if (cart.length > 0) submitCheckout();
+    }
+  });
+
   if (IS_SERVER) {
     const token = sessionStorage.getItem('btp_token');
     if (token) {
@@ -1673,7 +1699,8 @@ function renderCatalog() {
     const card = document.createElement('div');
     const stockQty = p.stock ? (p.stock.S || 0) : 0;
     const isOut = stockQty <= 0;
-    
+    const isLow = !isOut && stockQty <= LOW_STOCK_THRESHOLD;
+
     card.className = `product-card ${isOut ? 'out-of-stock' : ''}`;
     card.onclick = () => addToCart(p.sku);
     
@@ -1692,7 +1719,7 @@ function renderCatalog() {
       <div class="product-sku">${esc(p.sku)}</div>
       <div class="product-footer">
         <span class="product-price">฿${(p.price || 0).toLocaleString('th-TH', {minimumFractionDigits:2, maximumFractionDigits:2})}</span>
-        <span class="stock-pill ${isOut ? 'out' : 'in'}">${isOut ? 'หมด' : 'หน้าร้าน: ' + stockQty}</span>
+        <span class="stock-pill ${isOut ? 'out' : (isLow ? 'low' : 'in')}">${isOut ? 'หมด' : (isLow ? 'เหลือ ' + stockQty : 'หน้าร้าน: ' + stockQty)}</span>
       </div>
     `;
     grid.appendChild(card);
@@ -1839,6 +1866,7 @@ function addToCart(sku) {
     });
   }
   
+  lastTouchedSku = sku;
   renderCart();
   toast(`เพิ่ม ${p.name} ลงตะกร้าแล้ว`);
 }
@@ -1898,7 +1926,7 @@ function renderCart() {
   cart.forEach(item => {
     totalItems += item.qty;
     const row = document.createElement('div');
-    row.className = 'cart-item';
+    row.className = 'cart-item' + (item.sku === lastTouchedSku ? ' flash' : '');
     row.innerHTML = `
       <div class="cart-item-details">
         <div class="cart-item-name" title="${esc(item.name)}">${esc(item.name)}</div>
@@ -1917,6 +1945,7 @@ function renderCart() {
   
   countEl.textContent = totalItems;
   const fab = document.getElementById('fab-count'); if (fab) fab.textContent = totalItems;
+  lastTouchedSku = null; // flash เพียงครั้งเดียวหลังเพิ่มสินค้า
   updateTotals();
 }
 
